@@ -8,6 +8,9 @@ django = "*"
 djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
+uuid = "*"
+djangorestframework-simplejwt = "*"
+pillow = "*"
 
 [dev-packages]
 
