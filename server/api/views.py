@@ -15,10 +15,10 @@ class UserListView(generics.ListAPIView):
     serializer_class = serializers.CustomUserSerializer
     # permission_classes = [IsAuthenticated]
     
-class UserDetailView(generics.RetrieveAPIView):
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.CustomUserSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_queryset(self):
         return models.CustomUser.objects.filter(id=self.request.user.id)
     
@@ -71,6 +71,7 @@ class ReviewCreateView(generics.CreateAPIView):
     queryset = models.Review.objects.all()
     serializer_class = serializers.ReviewSerializer
     permission_classes = [IsAuthenticated]
+
 class ReviewListView(generics.ListAPIView):
     queryset = models.Review.objects.all()
     serializer_class = serializers.ReviewSerializer
