@@ -7,7 +7,6 @@ from uuid import uuid4
 class CustomUser(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     email = models.EmailField(unique=True)
-    role = models.CharField(max_length=100)
     updated_at = models.DateTimeField(auto_now=True)
     
     USERNAME_FIELD = 'email'
@@ -27,6 +26,7 @@ class CustomUser(AbstractUser):
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    role = models.CharField(max_length=100)
     first_name = models.CharField(max_length=100, null=True, blank=True)
     last_name = models.CharField(max_length=100, null=True, blank=True)
     secondary_email = models.EmailField(null=True, blank=True)

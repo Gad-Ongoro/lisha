@@ -17,10 +17,12 @@ class UserListView(generics.ListAPIView):
     
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.CustomUserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return models.CustomUser.objects.filter(id=self.request.user.id)
+        # return models.CustomUser.objects.filter(user=self.request.user)
+        # return models.CustomUser.objects.filter(id=self.request.user.id)
+        return models.CustomUser.objects.all()
     
 # profile view
 class ProfileListView(generics.ListAPIView):
