@@ -7,6 +7,7 @@ from uuid import uuid4
 class CustomUser(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     email = models.EmailField(unique=True)
+    verified = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
     
     USERNAME_FIELD = 'email'
@@ -22,13 +23,18 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
     
+class Token(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    access_token = models.CharField(max_length=255)
+    refresh_token = models.CharField(max_length=255)
+    updated_at = models.DateTimeField(auto_now=True)
+    
 # profile
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     role = models.CharField(max_length=100)
-    first_name = models.CharField(max_length=100, null=True, blank=True)
-    last_name = models.CharField(max_length=100, null=True, blank=True)
     secondary_email = models.EmailField(null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     county = models.CharField(max_length=100, null=True, blank=True)
