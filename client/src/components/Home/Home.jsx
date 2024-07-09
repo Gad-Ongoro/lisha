@@ -1,5 +1,6 @@
 import React from 'react';
-import Header from '../Header';
+import AnimatedYPage from '../AnimatedYPage';
+import NavBar from '../NavBar';
 import Hero from './Hero';
 import Features from './Features';
 import Categories from './Categories';
@@ -10,13 +11,15 @@ import Footer from '../Footer';
 const Home = () => {
   return (
     <div>
-      <Header />
-      <Hero />
-      <Features />
-      <Categories />
-      <Testimonials />
-      <CTA />
-      <Footer />
+      <AnimatedYPage>
+        <NavBar />
+        <Hero />
+        <Features />
+        <Categories />
+        <Testimonials />
+        <CTA />
+        <Footer />
+      </AnimatedYPage>
     </div>
   );
 };
