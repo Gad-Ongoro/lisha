@@ -5,9 +5,11 @@ import SideNav from './SideNav';
 import NavBar from './NavBar';
 import DashView from './DashView';
 import Settings from './Settings';
+import ProtectedRoute from '../Auth/ProtectedRoute';
 
 function CustomerDash() {
 	return (
+		<ProtectedRoute>
 		<AnimatedYPage>
 		<div className='container h-screen grid grid-cols-12'>
 			<div className='col-start-2 col-end-13'>
@@ -24,6 +26,7 @@ function CustomerDash() {
 			</div>
 		</div>
 		</AnimatedYPage>
+		</ProtectedRoute>
 	)
 }
 
