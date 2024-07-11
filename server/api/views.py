@@ -32,7 +32,9 @@ class UserCreateView(generics.CreateAPIView):
         context = {
             'username': user.username,
             'otp': otp,
+            'message': 'Your OTP code is:',
         }
+
         html_message = render_to_string('email_verification.html', context)
         plain_message = strip_tags(html_message)
         from_email = settings.DEFAULT_FROM_EMAIL
@@ -60,6 +62,40 @@ class UserVerificationOTPView(APIView):
                 return Response({'detail': 'User verified successfully.'}, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'Invalid or expired OTP.'}, status=status.HTTP_400_BAD_REQUEST)
+        except models.CustomUser.DoesNotExist:
+            return Response({'detail': 'User not found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+class ResendVerificationOTPView(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        try:
+            user = models.CustomUser.objects.get(email=email)
+
+            if user.is_verified:
+                return Response({'detail': 'User already verified.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            if not user.otp_secret:
+                user.otp_secret = pyotp.random_base32()
+                user.save()
+
+            totp = pyotp.TOTP(user.otp_secret, interval=600)
+            otp = totp.now()
+
+            # Email template context
+            subject = 'New OTP Code'
+            context = {
+                'username': user.username,
+                'otp': otp,
+                'message': 'Here is your new OTP code:',
+            }
+            html_message = render_to_string('email_verification.html', context)
+            plain_message = strip_tags(html_message)
+            from_email = settings.DEFAULT_FROM_EMAIL
+            to = user.email
+
+            send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+
+            return Response({'detail': 'A new OTP has been sent to your email.'}, status=status.HTTP_200_OK)
         except models.CustomUser.DoesNotExist:
             return Response({'detail': 'User not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
