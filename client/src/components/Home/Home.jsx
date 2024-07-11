@@ -6,6 +6,7 @@ import Features from './Features';
 import Categories from './Categories';
 import Testimonials from './Testimonials';
 import CTA from './CTA';
+import GoogleMaps from '../Maps/GoogleMaps';
 import Footer from '../Footer';
 
 const Home = () => {
@@ -18,6 +19,7 @@ const Home = () => {
         <Categories />
         <Testimonials />
         <CTA />
+        <GoogleMaps />
         <Footer />
       </AnimatedYPage>
     </div>
