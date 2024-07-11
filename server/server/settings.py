@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'mpesa',
     'rest_framework_simplejwt',
     'corsheaders',
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [

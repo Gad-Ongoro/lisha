@@ -14,6 +14,8 @@ pillow = "*"
 django-cors-headers = "*"
 pyotp = "*"
 python-dotenv = "*"
+django-phonenumber-field = {extras = ["phonenumbers"], version = "*"}
+phonenumbers = "*"
 
 [dev-packages]
 
