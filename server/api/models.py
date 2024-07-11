@@ -7,7 +7,8 @@ from uuid import uuid4
 class CustomUser(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     email = models.EmailField(unique=True)
-    verified = models.BooleanField(default=False)
+    otp_secret = models.CharField(max_length=32, blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
     
     USERNAME_FIELD = 'email'
