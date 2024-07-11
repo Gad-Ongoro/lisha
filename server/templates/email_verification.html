@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Account Verification</title>
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+        }
+        .email-body {
+            padding: 20px;
+            color: #333333;
+        }
+        .email-footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #777777;
+        }
+        .otp-code {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #4CAF50;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>Welcome to GOFoods</h1>
+        </div>
+        <div class="email-body">
+            <p>Hi {{ username }},</p>
+            <p>Your OTP code is:</p>
+            <div class="otp-code">{{ otp }}</div>
+            <p>Thank you for signing up. Use the above OTP to verify your email address.</p>
+            <p>If you didn't request this email, you can safely ignore it.</p>
+            <a href="#" class="btn">Verify Now</a>
+        </div>
+        <div class="email-footer">
+            &copy; 2024 GOFoods. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
