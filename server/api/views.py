@@ -1,6 +1,12 @@
-from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.core.mail import send_mail
+import pyotp
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from . import models
 from . import serializers
 
@@ -10,6 +16,53 @@ class UserCreateView(generics.CreateAPIView):
     queryset = models.CustomUser.objects.all()
     serializer_class = serializers.CustomUserSerializer
     
+    def perform_create(self, serializer):
+        user = serializer.save()
+
+        # User's secret key
+        if not user.otp_secret:
+            user.otp_secret = pyotp.random_base32()
+            user.save()
+
+        totp = pyotp.TOTP(user.otp_secret, interval=600)
+        otp = totp.now()
+
+        # Email template
+        subject = 'Welcome to GOFoods!'
+        context = {
+            'username': user.username,
+            'otp': otp,
+        }
+        html_message = render_to_string('email_verification.html', context)
+        plain_message = strip_tags(html_message)
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to = user.email
+
+        send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+        
+        # dev test
+        return Response({'detail': 'OTP sent to your email.', 'otp': otp,}, status=status.HTTP_201_CREATED)
+
+class UserVerificationOTPView(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        otp = request.data.get('otp')
+        try:
+            user = models.CustomUser.objects.get(email=email)
+            totp = pyotp.TOTP(user.otp_secret, interval=600)
+
+            if totp.verify(otp):
+                if user.is_verified:
+                    return Response({'detail': 'User already verified.'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                user.is_verified = True
+                user.save()
+                return Response({'detail': 'User verified successfully.'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': 'Invalid or expired OTP.'}, status=status.HTTP_400_BAD_REQUEST)
+        except models.CustomUser.DoesNotExist:
+            return Response({'detail': 'User not found.'}, status=status.HTTP_400_BAD_REQUEST)
+
 class UserListView(generics.ListAPIView):
     queryset = models.CustomUser.objects.all()
     serializer_class = serializers.CustomUserSerializer

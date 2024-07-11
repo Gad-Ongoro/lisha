@@ -7,7 +7,8 @@ urlpatterns = [
     path('users/register/', views.UserCreateView.as_view(), name='User Register'),
     path('users/', views.UserListView.as_view(), name='Users List'),
     path('users/<uuid:pk>/', views.UserDetailView.as_view(), name='User Detail'),
-    
+    path('otp-user-verification/', views.UserVerificationOTPView.as_view(), name='OTP Account Verification'),
+
     # profile
     path('profiles/', views.ProfileListView.as_view(), name='Profile List'),
     path('profiles/<uuid:pk>/', views.ProfileDetailView.as_view(), name='Profile Detail'),
