@@ -12,6 +12,8 @@ uuid = "*"
 djangorestframework-simplejwt = "*"
 pillow = "*"
 django-cors-headers = "*"
+pyotp = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
