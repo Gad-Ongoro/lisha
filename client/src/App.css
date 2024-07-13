@@ -1,0 +1,42 @@
+/* Top Waves Shaper */
+.custom-shape-divider-top-1720855527 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.custom-shape-divider-top-1720855527 svg {
+    position: relative;
+    display: block;
+    width: calc(130% + 1.3px);
+    height: 25px;
+}
+
+.custom-shape-divider-top-1720855527 .shape-fill {
+    fill: #FFFFFF;
+}
+
+/* Bottom Waves Shaper */
+.custom-shape-divider-bottom-1720856452 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1720856452 svg {
+    position: relative;
+    display: block;
+    width: calc(130% + 1.3px);
+    height: 25px;
+}
+
+.custom-shape-divider-bottom-1720856452 .shape-fill {
+    fill: #FFFFFF;
+}
