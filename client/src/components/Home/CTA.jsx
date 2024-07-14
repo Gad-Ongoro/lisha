@@ -1,15 +1,18 @@
 import React from 'react';
+import GoogleMaps from '../Maps/GoogleMaps';
 
-const CTA = () => {
+function CTA() {
   return (
-    <section className="bg-blue-500 text-white py-16">
-      <div className="container mx-auto px-6 text-center">
-        <h2 className="text-3xl font-bold mb-4">Join Us Today</h2>
-        <p className="text-xl mb-6">Sign up now and start connecting with local suppliers.</p>
-        <button className="bg-white text-blue-500 font-semibold py-2 px-4 rounded">Sign Up</button>
-      </div>
-    </section>
-  );
+    <div className='relative'>
+			<div className='grid sm:flex justify-around items-center bg-gray-100'>
+				<div className='grid justify-center items-center'>
+					<img src="images/GOFoods_mobile.png" alt="Mobile App" width={200} height={100} />
+					<p className='text-gray-500 font-bold'>Scan code to download the app</p>
+				</div>
+				<GoogleMaps />
+			</div>
+    </div>
+  )
 };
 
 export default CTA;

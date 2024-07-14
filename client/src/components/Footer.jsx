@@ -1,14 +1,20 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { CiLocationOn } from "react-icons/ci";
 import { BiSupport } from "react-icons/bi";
 import { FiMail } from "react-icons/fi";
 import { FaRegClock } from "react-icons/fa6";
+import TopWaves from './Shapers/TopWaves';
 
 const Footer = () => {
   return (
-    <div>
+    <div className='relative'>
+      <TopWaves />
       <footer className="bg-gray-900 text-white py-6">
-        <div className='flex justify-around'>
+        <div className='text-center'>
+          <NavLink to={'/'} className='text-2xl text-center font-bold cursor-pointer text-green-500'>GOFoods</NavLink>
+        </div>
+        <div className='grid md:flex grid-cols-2 justify-around'>
           <div>
             <div className='flex items-center m-1 p-1'>
               <CiLocationOn className='text-2xl font-bold m-1' />
@@ -28,7 +34,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div>
+          <div className='hidden sm:block'>
             <h3 className='font-semibold'>Account</h3>
             <p className='text-gray-400'>Products</p>
             <p className='text-gray-400'>Cart</p>
@@ -37,15 +43,16 @@ const Footer = () => {
             <p className='text-gray-400'>Help</p>
           </div>
 
-          <div>
+          <div className='hidden sm:block'>
             <h3 className='font-semibold'>Company</h3>
             <p className='text-gray-400'>About Us</p>
             <p className='text-gray-400'>Privacy Policy</p>
             <p className='text-gray-400'>Terms & Conditions</p>
             <p className='text-gray-400'>Careers</p>
+            <p className='text-gray-400'><a href='https://github.com/Gad-Ongoro/lisha.git' target='_blank' rel='noreferrer'>Develop</a></p>
           </div>
 
-          <div>
+          <div className='hidden sm:block'>
             <h3 className='font-semibold'>Follow Us</h3>
             <p className='text-gray-400'>Facebook</p>
             <p className='text-gray-400'>Twitter</p>
@@ -53,7 +60,7 @@ const Footer = () => {
             <p className='text-gray-400'>LinkedIn</p>
           </div>
 
-          <div>
+          <div className='hidden md:block'>
             <h3 className='font-semibold'>Payment Methods</h3>
             <p className='text-gray-400'>Mpesa</p>
             <p className='text-gray-400'>Visa</p>
@@ -62,7 +69,7 @@ const Footer = () => {
           </div>
 
         </div>
-        <p className='text-center text-gray-600 my-1'>© 2024 GoFoods. All rights reserved.</p>
+        <p className='text-center text-gray-600 my-1'>© 2024 GOFoods. All rights reserved.</p>
       </footer>
     </div>
   );

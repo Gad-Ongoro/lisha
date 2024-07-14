@@ -50,14 +50,14 @@ function GoogleMaps() {
 
   return (
     <Fragment>
-      <div className="container">
-        <div style={{ height: "400px", width: "400px" }}>
+      <div className="">
+        <div style={{ height: "310px", width: "310px" }}>
           {isLoaded ? (
             <GoogleMap
               center={{ lat: -4.05483, lng: 39.66919 }}
               zoom={10}
               onClick={() => setActiveMarker(null)}
-              mapContainerStyle={{ width: "100%", height: "400px" }}
+              mapContainerStyle={{ width: "100%", height: "310px" }}
             >
               {markers.map(({ id, name, position }) => (
                 <MarkerF

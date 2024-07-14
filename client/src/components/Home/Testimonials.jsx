@@ -1,8 +1,10 @@
 import React from 'react';
+import BottomWaves from '../Shapers/BottomWaves';
 
 const Testimonials = () => {
   return (
-    <section className="bg-gray-100 py-16">
+    <section className="relative bg-emerald-500 py-10 rounded-b-xl">
+      <BottomWaves />
       <div className="container mx-auto px-6 text-center">
         <h2 className="text-3xl font-bold mb-6">What Our Customers Say</h2>
         <div className="flex flex-wrap -mx-4">
