@@ -18,6 +18,8 @@ django-phonenumber-field = {extras = ["phonenumbers"], version = "*"}
 phonenumbers = "*"
 requests = "*"
 faker = "*"
+djoser = "*"
+django-rest-auth = "*"
 
 [dev-packages]
 
