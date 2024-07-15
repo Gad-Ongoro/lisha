@@ -133,6 +133,16 @@ class SetNewPasswordView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         return Response({'success':True, 'message':"Password Reset Succesfully"}, status=status.HTTP_200_OK)
 
+class LogoutApiView(generics.GenericAPIView):
+    serializer_class = serializers.LogoutUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer=self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+ 
 class UserListView(generics.ListAPIView):
     queryset = models.CustomUser.objects.all()
     serializer_class = serializers.CustomUserSerializer

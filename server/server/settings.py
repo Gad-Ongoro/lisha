@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'phonenumber_field',
     'djoser',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
