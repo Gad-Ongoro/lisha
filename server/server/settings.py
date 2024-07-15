@@ -29,6 +29,12 @@ EMAIL_HOST_USER = 'gadongoro1@gmail.com'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
+    'SERIALIZERS': {},
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -43,7 +49,8 @@ INSTALLED_APPS = [
     'mpesa',
     'rest_framework_simplejwt',
     'corsheaders',
-    "phonenumber_field",
+    'phonenumber_field',
+    'djoser',
 ]
 
 MIDDLEWARE = [

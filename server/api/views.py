@@ -7,6 +7,9 @@ import pyotp
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_bytes, smart_str, DjangoUnicodeDecodeError
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from . import models
 from . import serializers
 
@@ -98,6 +101,37 @@ class ResendVerificationOTPView(APIView):
             return Response({'detail': 'A new OTP has been sent to your email.'}, status=status.HTTP_200_OK)
         except models.CustomUser.DoesNotExist:
             return Response({'detail': 'User not found.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class PasswordResetRequestView(generics.GenericAPIView):
+    serializer_class = serializers.PasswordResetRequestSerializer
+
+    def post(self, request):
+        serializer=self.serializer_class(data=request.data, context={'request':request})
+        serializer.is_valid(raise_exception=True)
+        return Response({'message':'we have sent you a link to reset your password'}, status=status.HTTP_200_OK)
+        # return Response({'message':'user with that email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+class PasswordResetConfirm(generics.GenericAPIView):
+
+    def get(self, request, uidb64, token):
+        try:
+            user_id=smart_str(urlsafe_base64_decode(uidb64))
+            user=models.CustomUser.objects.get(id=user_id)
+
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'success':True, 'message':'credentials is valid', 'uidb64':uidb64, 'token':token}, status=status.HTTP_200_OK)
+
+        except DjangoUnicodeDecodeError as identifier:
+            return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class SetNewPasswordView(generics.GenericAPIView):
+    serializer_class = serializers.SetNewPasswordSerializer
+
+    def patch(self, request):
+        serializer=self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({'success':True, 'message':"Password Reset Succesfully"}, status=status.HTTP_200_OK)
 
 class UserListView(generics.ListAPIView):
     queryset = models.CustomUser.objects.all()
