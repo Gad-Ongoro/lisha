@@ -45,12 +45,6 @@ class Command(BaseCommand):
                 password=self.faker.password(),
                 is_verified=True,
             )
-            Token.objects.create(
-                id=uuid4(),
-                user=user,
-                access_token=self.faker.sha256(),
-                refresh_token=self.faker.sha256(),
-            )
 
     def create_products(self, records):
         users = CustomUser.objects.all()
