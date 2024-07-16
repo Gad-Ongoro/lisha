@@ -13,7 +13,7 @@ from . utils import send_normal_email
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomUser
-        fields = ['id', 'first_name', 'last_name', 'username', 'email', 'otp_secret', 'is_verified', 'password', 'date_joined', 'updated_at']
+        fields = ['id', 'first_name', 'last_name', 'username', 'email', 'role', 'otp_secret', 'is_verified', 'password', 'date_joined', 'updated_at']
         extra_kwargs = {'password': {'write_only': True}, 'otp_secret': {'read_only': True}, 'is_verified': {'read_only': True}}
 
     def create(self, validated_data):

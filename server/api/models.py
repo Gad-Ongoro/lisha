@@ -7,6 +7,7 @@ from uuid import uuid4
 class CustomUser(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     email = models.EmailField(unique=True)
+    role = models.CharField(max_length=100)
     otp_secret = models.CharField(max_length=32, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
@@ -24,18 +25,10 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
     
-class Token(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    access_token = models.CharField(max_length=255)
-    refresh_token = models.CharField(max_length=255)
-    updated_at = models.DateTimeField(auto_now=True)
-    
 # profile
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    role = models.CharField(max_length=100)
     secondary_email = models.EmailField(null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     county = models.CharField(max_length=100, null=True, blank=True)
@@ -60,6 +53,7 @@ class Product(models.Model):
     perishable = models.BooleanField()
     expiration_date = models.DateField()
     image = models.ImageField(upload_to='product_images/')
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -71,6 +65,19 @@ class Order(models.Model):
     quantity = models.PositiveIntegerField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     order_status = models.CharField(max_length=20)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+class Cart(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    user = models.ForeignKey(CustomUser, related_name='carts', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='carts', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
 # review
 class Review(models.Model):
