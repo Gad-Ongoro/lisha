@@ -2,8 +2,10 @@ import React, { useEffect, useState, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { IoSearch } from "react-icons/io5";
 import { IoIosLogIn } from "react-icons/io";
+import { IoLogOutOutline } from "react-icons/io5";
 import { HiOutlineUserAdd } from "react-icons/hi";
 import { AppContext } from '../../App';
+import api from '../../api';
 import { Dialog, DialogPanel, Disclosure, DisclosureButton, DisclosurePanel,
   Popover,
   PopoverButton,
@@ -49,6 +51,11 @@ export default function NavBar() {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const  handleLogout = () => {
+    setAuth(false);
+    localStorage.clear();
+  }
 
   return (
     <header className={`sticky top-0 z-40 ${isScrolled ? 'bg-emerald-100' : 'bg-white'} transition-all duration-300`}>
@@ -129,23 +136,51 @@ export default function NavBar() {
 
         </PopoverGroup>
         <div className="hidden lg:flex items-center lg:gap-x-4 lg:flex-1 lg:justify-end">
-          <div className='flex gap-x-1 items-center transition-all duration-300 hover:font-bold hover:text-emerald-600 hover:text-xl'>
-            <NavLink to={'/account/usertype'}>
-              <HiOutlineUserAdd />
-            </NavLink>
-            <NavLink to="/account/usertype" className="text-sm font-semibold text-gray-900">
-              Sign up
-            </NavLink>
-          </div>
+          {
+            !auth &&
+            (
+              <div className='flex gap-x-1 items-center transition-all duration-300 hover:font-bold hover:text-emerald-600 hover:text-xl'>
+                <NavLink to={'/account/usertype'}>
+                  <HiOutlineUserAdd />
+                </NavLink>
+                <NavLink to="/account/usertype" className="text-sm font-semibold text-gray-900">
+                  Sign up
+                </NavLink>
+              </div>
+            )
+          }
 
-          <div className='flex gap-x-1 items-center transition-all duration-300 hover:font-bold hover:text-emerald-600 hover:text-xl'>
-            <NavLink to="/account/signin" className="text-sm font-semibold text-gray-900">
-              Login
-            </NavLink>
-            <NavLink to={'/account/signin'}>
-              <IoIosLogIn className='font-bold text-xl' />
-            </NavLink>
-          </div>
+
+          {
+            !auth &&
+            (
+              <div className='flex gap-x-1 items-center transition-all duration-300 hover:font-bold hover:text-emerald-600 hover:text-xl'>
+                <NavLink to="/account/signin" className="text-sm font-semibold text-gray-900">
+                  Login
+                </NavLink>
+                <NavLink to={'/account/signin'}>
+                  <IoIosLogIn className='font-bold text-xl' />
+                </NavLink>
+              </div>
+            )
+          }
+
+          {
+            auth &&
+            (
+              <div 
+                onClick={handleLogout}
+                className='flex gap-x-1 items-center transition-all duration-300 hover:font-bold hover:text-emerald-600 hover:text-xl'
+              >
+                <NavLink to="/account/signin" className="text-sm font-semibold text-gray-900">
+                  Logout
+                </NavLink>
+                <NavLink to={'/account/signin'}>
+                  <IoLogOutOutline className='font-bold text-xl' />
+                </NavLink>
+              </div>
+            )
+          }
         </div>
       </nav>
       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
