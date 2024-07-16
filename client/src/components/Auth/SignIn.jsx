@@ -13,7 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { NavLink, useNavigate } from 'react-router-dom';
-import AnimatedYPage from '../AnimatedYPage';
+import AnimatedXPage from '../AnimatedXPage';
 import { AppContext } from '../../App';
 import api from '../../api';
 
@@ -66,91 +66,93 @@ export default function SignIn() {
   };
 
   return (
-		<AnimatedYPage>
-    <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage:
-              'url("/images/signinimg.jpg")',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'left',
-          }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
+    <div className='bg-gray-900'>
+		<AnimatedXPage>
+      <ThemeProvider theme={defaultTheme}>
+        <Grid container component="main" sx={{ height: '100vh' }}>
+          <CssBaseline />
+          <Grid
+            item
+            xs={false}
+            sm={4}
+            md={7}
             sx={{
-              my: 8,
-              mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
+              backgroundImage:
+                'url("/images/signinimg.jpg")',
+              backgroundColor: (t) =>
+                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+              backgroundSize: 'cover',
+              backgroundPosition: 'left',
             }}
-          >
-            <NavLink to={"/"}>
-              <h2 className='concert-one-regular text-green-500 text-3xl font-bold'>GOFoods</h2>
-            </NavLink>
-            <h2 className='font-bold text-2xl'>Welcome Back!</h2>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                onChange={handleChange}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                onChange={handleChange}
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
+          />
+          <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+            <Box
+              sx={{
+                my: 8,
+                mx: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <NavLink to={"/"}>
+                <h2 className='concert-one-regular text-green-500 text-3xl font-bold'>GOFoods</h2>
+              </NavLink>
+              <h2 className='font-bold text-2xl'>Welcome Back!</h2>
+              <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  onChange={handleChange}
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  onChange={handleChange}
+                />
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Sign In
+                </Button>
+                <Grid container>
+                  <Grid item xs>
+                    <NavLink to="/password/reset" variant="body2">
+                      Forgot password?
+                    </NavLink>
+                  </Grid>
+                  <Grid item>
+                    <NavLink to="/account/usertype" variant="body2">
+                      Don't have an account? <span className='text-blue-500 cursor-pointer hover:text-blue-600 transition duration-300 ease-in'>Sign Up</span>
+                    </NavLink>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <NavLink to="/clientsignup" variant="body2">
-                    Don't have an account? <span className='text-blue-500 cursor-pointer hover:text-blue-600 transition duration-300 ease-in'>Sign Up</span>
-                  </NavLink>
-                </Grid>
-              </Grid>
-              <Copyright sx={{ mt: 5 }} />
+                <Copyright sx={{ mt: 5 }} />
+              </Box>
             </Box>
-          </Box>
+          </Grid>
         </Grid>
-      </Grid>
-    </ThemeProvider>
-		</AnimatedYPage>
+      </ThemeProvider>
+		</AnimatedXPage>
+    </div>
   );
 };

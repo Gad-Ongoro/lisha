@@ -119,28 +119,30 @@ export default function NavBar() {
             </div>
           </div>
 
-          <select name="" id="" onChange={(e) => localStorage.setItem('currency', e.target.value)}>
-            <option className='' disabled selected value={localStorage.getItem('currency')}>{localStorage.getItem('currency') ? localStorage.getItem('currency') : 'Ksh'}</option>
-            <option value="Ksh">Ksh</option>
-            <option value="USD">USD</option>
-          </select>
+					<div className='transition-all duration-300 hover:text-emerald-600 cursor-pointer'>
+						<select className='rounded-lg' name="" id="" onChange={(e) => localStorage.setItem('currency', e.target.value)}>
+							<option disabled selected value={localStorage.getItem('currency')}>{localStorage.getItem('currency') ? localStorage.getItem('currency') : 'Ksh'}</option>
+							<option value="Ksh">Ksh</option>
+							<option value="USD">USD</option>
+						</select>
+					</div>
 
         </PopoverGroup>
         <div className="hidden lg:flex items-center lg:gap-x-4 lg:flex-1 lg:justify-end">
-          <div className='flex gap-x-1 items-center'>
-            <NavLink to={'/clientsignup'}>
+          <div className='flex gap-x-1 items-center transition-all duration-300 hover:font-bold hover:text-emerald-600 hover:text-xl'>
+            <NavLink to={'/account/usertype'}>
               <HiOutlineUserAdd />
             </NavLink>
-            <NavLink to="/clientsignup" className="text-sm font-semibold text-gray-900">
+            <NavLink to="/account/usertype" className="text-sm font-semibold text-gray-900">
               Sign up
             </NavLink>
           </div>
 
-          <div className='flex gap-x-1 items-center'>
-            <NavLink to="/signin" className="text-sm font-semibold text-gray-900">
+          <div className='flex gap-x-1 items-center transition-all duration-300 hover:font-bold hover:text-emerald-600 hover:text-xl'>
+            <NavLink to="/account/signin" className="text-sm font-semibold text-gray-900">
               Login
             </NavLink>
-            <NavLink to={'/signin'}>
+            <NavLink to={'/account/signin'}>
               <IoIosLogIn className='font-bold text-xl' />
             </NavLink>
           </div>

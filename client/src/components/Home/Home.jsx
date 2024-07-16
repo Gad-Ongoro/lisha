@@ -11,8 +11,8 @@ import Footer from '../Footer';
 const Home = () => {
   return (
     <div>
+      <NavBar />
       <AnimatedYPage>
-        <NavBar />
         <Hero />
         <Features />
         <Categories />
