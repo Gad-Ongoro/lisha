@@ -9,7 +9,6 @@ djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
 uuid = "*"
-djangorestframework-simplejwt = "*"
 pillow = "*"
 django-cors-headers = "*"
 pyotp = "*"
@@ -20,6 +19,7 @@ requests = "*"
 faker = "*"
 djoser = "*"
 django-rest-auth = "*"
+djangorestframework-simplejwt = {extras = ["blacklist"], version = "*"}
 
 [dev-packages]
 
