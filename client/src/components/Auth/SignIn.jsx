@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { jwtDecode } from 'jwt-decode';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -48,11 +49,13 @@ export default function SignIn() {
     try{
       api.post('token/', inputs)
       .then((res) => {
+        console.log(res);
         if(res.status === 200){
+          const user_id = jwtDecode(res.data.access).user_id;
           localStorage.setItem('access', res.data.access);
           localStorage.setItem('refresh', res.data.refresh);
           setAuth(true);
-          navigate('/');
+          navigate(`/account/${user_id}/dashview`);
         }
       })
       .catch((err) => {
@@ -94,7 +97,7 @@ export default function SignIn() {
               }}
             >
               <NavLink to={"/"}>
-                <h2 className='concert-one-regular text-green-500 text-3xl font-bold'>GOFoods</h2>
+                <h2 className='text-green-500 text-3xl font-bold'>GOFoods</h2>
               </NavLink>
               <h2 className='font-bold text-2xl'>Welcome Back!</h2>
               <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
