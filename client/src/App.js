@@ -14,7 +14,12 @@ export const AppContext = createContext();
 function App() {
   const [ snackBarOpen, setSnackBarOpen ] = useState(false);
   const accessToken = localStorage.getItem('access');
+  const refreshToken = localStorage.getItem('refresh');
   const [auth, setAuth] = useState(false);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   useEffect(() => {
     if (accessToken) {
@@ -26,7 +31,7 @@ function App() {
 
   return (
     <div>
-      <AppContext.Provider value={{ auth, setAuth, snackBarOpen, setSnackBarOpen }}>
+      <AppContext.Provider value={{ accessToken, refreshToken, auth, setAuth, snackBarOpen, setSnackBarOpen, scrollToTop }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/map" element={<GoogleMaps />} />
