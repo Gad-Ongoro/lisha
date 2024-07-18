@@ -9,12 +9,12 @@ import { TbLogout2 } from "react-icons/tb";
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { DashContext } from './ClientDash';
+import { DashContext } from './DashHome';
 import { AppContext } from '../../App';
 
 export default function DashDrawer() {
-	const { dashDrawerOpen, setDashDrawerOpen } = useContext(DashContext);
-	const { scrollToTop } = useContext(AppContext);
+  const { user_id, scrollToTop } = useContext(AppContext);
+	const { dashDrawerOpen, setDashDrawerOpen, handleLogout } = useContext(DashContext);
 
 	const handleNavClick = () => {
 		scrollToTop();
@@ -58,26 +58,29 @@ export default function DashDrawer() {
 											<TbSmartHome className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30}/>
 											<span>Home</span>
 										</NavLink>
-										<NavLink to={'/clientdash/dashview'} className={'flex items-center gap-2'} onClick={handleNavClick}>
+										<NavLink to={`/account/${user_id}/dashview`} className={'flex items-center gap-2'} onClick={handleNavClick}>
 											<CgProfile className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30} />
 											<span>Profile</span>
 										</NavLink>
-										<NavLink to={'/clientdash/notifications'} className={'flex items-center gap-2'} onClick={handleNavClick}>
+										<NavLink to={`/account/${user_id}/notifications`} className={'flex items-center gap-2'} onClick={handleNavClick}>
 											<IoNotificationsOutline className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30} />
 											<span>Notifications</span>
 										</NavLink>
-										<NavLink to={'/clientdash/favorites'} className={'flex items-center gap-2'} onClick={handleNavClick}>
+										<NavLink to={`/account/${user_id}/favorites`} className={'flex items-center gap-2'} onClick={handleNavClick}>
 											<MdOutlineFavoriteBorder className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30} />
 											<span>Favorites</span>
 										</NavLink>
-										<NavLink to={'/clientdash/settings'} className={'flex items-center gap-2'} onClick={handleNavClick}>
+										<NavLink to={`/account/${user_id}/settings`} className={'flex items-center gap-2'} onClick={handleNavClick}>
 											<RiSettings3Line className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30} />
 											<span>Settings</span>
 										</NavLink>
 
 										<SnackbarProvider anchorOrigin={{ vertical: 'top', horizontal: 'left' }} />
 										
-										<div className='flex items-center gap-2'>
+										<div 
+                      className='flex items-center gap-2'
+                      onClick={handleLogout}
+                    >
 											<TbLogout2 
 												onClick={() => enqueueSnackbar('Logged out successfully', { variant: 'success' })} 
 												className='transition-all duration-400 cursor-pointer hover:text-green-500' 

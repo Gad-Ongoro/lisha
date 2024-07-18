@@ -1,6 +1,5 @@
 import { useState, useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { IoLogOutOutline } from "react-icons/io5";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Button, Disclosure, DisclosureButton, DisclosurePanel, } from '@headlessui/react';
@@ -21,7 +20,7 @@ const callsToAction = [
 ]
 
 export default function HomeDrawer( {mobileMenuOpen, setMobileMenuOpen} ) {
-  const { auth, setAuth, setSnackBarOpen } = useContext(AppContext);
+  const { auth, user_id, setAuth, setSnackBarOpen } = useContext(AppContext);
   const [snackBarMsg, setSnackBarMsg] = useState('');
   const [ snackBarSeverity, setSnackBarSeverity ] = useState('');
   const refreshToken = localStorage.getItem('refresh');
@@ -153,7 +152,7 @@ export default function HomeDrawer( {mobileMenuOpen, setMobileMenuOpen} ) {
                               <NavLink to="/clientdash/dashview">
                                 <FaRegUser />
                               </NavLink>
-                              <NavLink to="/clientdash/dashview" className="text-sm font-semibold text-gray-900">
+                              <NavLink to={`/account/${user_id}/dashview/`} className="text-sm font-semibold text-gray-900">
                                 Account
                               </NavLink>
                             </div>

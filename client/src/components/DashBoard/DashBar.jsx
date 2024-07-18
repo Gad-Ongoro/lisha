@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { LiaInboxSolid } from "react-icons/lia";
 import { FiEdit3 } from "react-icons/fi";
-import { DashContext } from "./ClientDash";
+import { DashContext } from "./DashHome";
 
 function DashBar() {
 	const { dashDrawerOpen, setDashDrawerOpen } = useContext(DashContext);

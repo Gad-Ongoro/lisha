@@ -24,7 +24,7 @@ const callsToAction = [
 
 export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { auth, setAuth, setSnackBarOpen } = useContext(AppContext);
+  const { auth, setAuth, user_id, setSnackBarOpen } = useContext(AppContext);
   const [snackBarMsg, setSnackBarMsg] = useState('');
   const [ snackBarSeverity, setSnackBarSeverity ] = React.useState('');
   const refreshToken = localStorage.getItem('refresh');
@@ -175,7 +175,7 @@ export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
                   <NavLink to="/account/signin" className="text-sm font-semibold text-gray-900">
                     Login
                   </NavLink>
-                  <NavLink to={'/account/signin'}>
+                  <NavLink to={`/account/signin`}>
                     <IoIosLogIn className='font-bold text-xl' />
                   </NavLink>
                 </div>
@@ -185,10 +185,10 @@ export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
             {
               auth && (
                 <div className='flex gap-x-1 items-center transition-all duration-300 hover:font-bold hover:text-emerald-600 hover:text-xl'>
-                  <NavLink to="/clientdash/dashview">
+                  <NavLink to={`/account/${user_id}/dashview`}>
                     <FaRegUser />
                   </NavLink>
-                  <NavLink to="/clientdash/dashview" className="text-sm font-semibold text-gray-900">
+                  <NavLink to={`/account/${user_id}/dashview`} className="text-sm font-semibold text-gray-900">
                     Account
                   </NavLink>
                 </div>
