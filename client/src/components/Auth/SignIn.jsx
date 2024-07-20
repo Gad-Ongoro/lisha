@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { enqueueSnackbar } from 'notistack';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -10,7 +11,6 @@ import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -59,10 +59,12 @@ export default function SignIn() {
         }
       })
       .catch((err) => {
-        console.log(err)
+        enqueueSnackbar(`${err.response.data.detail}`, { variant: 'error' });
+        console.log(err);
       })
     }catch(err){
-      console.log(err)
+      enqueueSnackbar(`${err.response.data.detail}`, { variant: 'error' });
+      console.log(err);
     }
   };
 
