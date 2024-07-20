@@ -33,7 +33,7 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function ClientSignUp() {
+export default function SignUp() {
 	const { snackBarOpen, setSnackBarOpen } = React.useContext(AppContext);
 	const [ snackBarMsg, setSnackBarMsg ] = React.useState('');
 	const [ snackBarSeverity, setSnackBarSeverity ] = React.useState('');
@@ -56,7 +56,8 @@ export default function ClientSignUp() {
 					setSnackBarSeverity('success');
 					setSnackBarMsg('Successufully registered! Please check your email for a verification OTP!');
 					setSnackBarOpen(true);
-					navigate('/account/signin')
+					localStorage.setItem('email', inputs.email);
+					navigate('/account/otpverification');
 				}
 			})
 			.catch((err) => {
