@@ -8,10 +8,11 @@ import GoogleMaps from './components/Maps/GoogleMaps';
 import UserType from './components/Auth/UserType';
 import SignUp from './components/Auth/SignUp';
 import OTPVerification from './components/Auth/OTPVerification';
-import MpesaPayment from './components/DashBoard/MpesaPayment';
 import SignIn from './components/Auth/SignIn';
 import PasswordResetRequest from './components/Auth/PswdRstReq';
 import PasswordResetConfirm from './components/Auth/PswdRstCnfrm';
+import ProfileUpdateForm from './components/DashBoard/ProfileUpdateForm';
+import api from './api';
 export const AppContext = createContext();
 
 function App() {
@@ -20,15 +21,29 @@ function App() {
   const accessToken = localStorage.getItem('access');
   const refreshToken = localStorage.getItem('refresh');
   const user_id = accessToken !== null || undefined ? jwtDecode(accessToken).user_id : null;
+  const [ user, setUser ] = useState({});
   const [auth, setAuth] = useState(false);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  useEffect(() => {
+  async function fetchUser() {
+		try {
+				const res = await api.get(`users/${user_id}/`);
+			 if (res.status === 200) {
+				 	setUser(res.data);
+			 }
+		}
+		catch (error) {
+			console.error(error);
+		}
+	};
+
+  useEffect( () => {
     if (accessToken) {
       setAuth(true);
+      fetchUser();
     } else {
       setAuth(false);
     }
@@ -36,7 +51,7 @@ function App() {
 
   return (
     <div>
-      <AppContext.Provider value={{ navigate, accessToken, refreshToken, auth, setAuth, user_id, snackBarOpen, setSnackBarOpen, scrollToTop }}>
+      <AppContext.Provider value={{ navigate, accessToken, refreshToken, auth, setAuth, user_id, user, snackBarOpen, setSnackBarOpen, scrollToTop }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/map" element={<GoogleMaps />} />
@@ -44,10 +59,10 @@ function App() {
           <Route path="/account/signup" element={<SignUp />} />
           <Route path="/account/otpverification" element={<OTPVerification />} />
           <Route path="/account/signin" element={<SignIn />} />
-          <Route path="/lipa-na-mpesa" element={<MpesaPayment />} />
           <Route path="/password/reset" element={<PasswordResetRequest />} />
           <Route path="/password/reset/confirm/:uid/:token" element={<PasswordResetConfirm />} />
           <Route path="/account/:user/*" element={<DashHome />} />
+          <Route path="/account/profile" element={<ProfileUpdateForm />} />
         </Routes>
       </AppContext.Provider>
     </div>
