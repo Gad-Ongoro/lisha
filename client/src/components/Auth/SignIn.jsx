@@ -55,6 +55,7 @@ export default function SignIn() {
           localStorage.setItem('access', res.data.access);
           localStorage.setItem('refresh', res.data.refresh);
           setAuth(true);
+          enqueueSnackbar(`Successfully logged in `, { variant: 'success' });
           navigate(`/account/${user_id}/dashview`);
         }
       })
