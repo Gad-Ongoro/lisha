@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { enqueueSnackbar } from 'notistack';
 import { NavLink, useNavigate } from 'react-router-dom';
 import SnackBar from '../Notifications/SnackBar';
 import { IoSearch } from "react-icons/io5";
@@ -20,6 +21,11 @@ const products = [
 const callsToAction = [
   { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
   { name: 'Contact sales', href: '#', icon: PhoneIcon },
+]
+
+const currency = [
+  { name: 'Kenyan Shilling', code: 'KES' },
+  { name: 'United States Dollar', code: 'USD' },
 ]
 
 export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
@@ -143,13 +149,34 @@ export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
               </div>
             </div>
 
-            <div className='transition-all duration-300 hover:text-emerald-600 cursor-pointer'>
-              <select className='rounded-lg' name="" id="" onChange={(e) => localStorage.setItem('currency', e.target.value)}>
-                <option disabled selected value={localStorage.getItem('currency')}>{localStorage.getItem('currency') ? localStorage.getItem('currency') : 'Ksh'}</option>
-                <option value="Ksh">Ksh</option>
-                <option value="USD">USD</option>
-              </select>
-            </div>
+            <Popover className="relative">
+              <PopoverButton className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 outline-none">
+                Currency
+                <ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none text-gray-400" />
+              </PopoverButton>
+
+              <PopoverPanel
+                transition
+                className="absolute -left-20 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
+              >
+                <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-green-50">
+                  {currency.map((item) => (
+                    <p
+                      key={item.code}
+                      href={item.href}
+                      onClick={() => {
+                        enqueueSnackbar(`Currency set to ${item.code}`, { variant: 'success' });
+                        localStorage.setItem('currency', item.code);
+                        }
+                      }
+                      className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {item.code}
+                    </p>
+                  ))}
+                </div>
+              </PopoverPanel>
+            </Popover>
 
           </PopoverGroup>
           <div className="hidden lg:flex items-center lg:gap-x-4 lg:flex-1 lg:justify-end">
