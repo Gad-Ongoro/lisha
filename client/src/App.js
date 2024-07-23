@@ -11,7 +11,7 @@ import OTPVerification from './components/Auth/OTPVerification';
 import SignIn from './components/Auth/SignIn';
 import PasswordResetRequest from './components/Auth/PswdRstReq';
 import PasswordResetConfirm from './components/Auth/PswdRstCnfrm';
-import ProfileUpdateForm from './components/DashBoard/ProfileUpdateForm';
+import ProductsPage from './components/Products/ProductsPage';
 import api from './api';
 export const AppContext = createContext();
 
@@ -62,7 +62,7 @@ function App() {
           <Route path="/password/reset" element={<PasswordResetRequest />} />
           <Route path="/password/reset/confirm/:uid/:token" element={<PasswordResetConfirm />} />
           <Route path="/account/:user/*" element={<DashHome />} />
-          <Route path="/account/profile" element={<ProfileUpdateForm />} />
+          <Route path="/products/*" element={<ProductsPage />} />
         </Routes>
       </AppContext.Provider>
     </div>
