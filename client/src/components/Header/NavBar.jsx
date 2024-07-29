@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import { NavLink, useNavigate } from 'react-router-dom';
 import SnackBar from '../Notifications/SnackBar';
+import CartIcon from '../Cart/CartIcon';
 import { IoSearch } from "react-icons/io5";
 import { IoIosLogIn } from "react-icons/io";
 import { IoLogOutOutline } from "react-icons/io5";
@@ -13,10 +14,24 @@ import { Button, Popover, PopoverButton, PopoverGroup, PopoverPanel } from '@hea
 
 import { Bars3Icon, ChartPieIcon, CursorArrowRaysIcon, } from '@heroicons/react/24/outline';
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid';
+import { LuVegan } from "react-icons/lu";
+import { GiFruitBowl } from "react-icons/gi";
+import { TbEggs } from "react-icons/tb";
+import { GiDoubleFish } from "react-icons/gi";
+import { TbMeat } from "react-icons/tb";
+import { GiGrainBundle } from "react-icons/gi";
+import { GiHoneyJar } from "react-icons/gi";
+import { LuMilk } from "react-icons/lu";
 
 const products = [
-  { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
-  { name: 'Engagement', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
+  { name: 'Vegetables', description: 'Fresh, nutritious vegetables for healthy meals.', href: '/products/vegetables', icon: LuVegan },
+  { name: 'Fruits', description: 'Juicy, ripe fruits picked fresh for and tasty treats.', href: '/products/fruits', icon: GiFruitBowl },
+  { name: 'Eggs', description: 'Rich in flavor and essential nutrients.', href: '/products/eggs', icon: TbEggs },
+  { name: 'Fish & Seafood', description: 'Sustainably sourced for delicious, healthy meals.', href: '/products/fish&seafood', icon: GiDoubleFish },
+  { name: 'Meat & Poultry', description: 'Farm-raised for flavor and quality.', href: '/products/meat&poultry', icon: TbMeat },
+  { name: 'Grains & Cereals', description: 'Nutritious grains and cereals for meals', href: '/products/grains&cereals', icon: GiGrainBundle },
+  { name: 'Bee Products', description: 'Natural bee products, pure and beneficial for wellness.', href: '/products/beeproducts', icon: GiHoneyJar },
+  { name: 'Dairy Products', description: 'Rich in protein and essential nutrients.', href: '/products/dairyproducts', icon: LuMilk },
 ]
 const callsToAction = [
   { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
@@ -30,7 +45,7 @@ const currency = [
 
 export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { auth, setAuth, user_id, setSnackBarOpen } = useContext(AppContext);
+  const { auth, setAuth, user_id, user, setSnackBarOpen, setCartOpen } = useContext(AppContext);
   const [snackBarMsg, setSnackBarMsg] = useState('');
   const [ snackBarSeverity, setSnackBarSeverity ] = React.useState('');
   const refreshToken = localStorage.getItem('refresh');
@@ -108,14 +123,15 @@ export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
                 transition
                 className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
               >
-                <div className="p-4">
+                <div className="p-1">
                   {products.map((item) => (
-                    <div
+                    <NavLink
                       key={item.name}
-                      className="group relative flex items-center gap-x-6 rounded-lg p-3 text-sm leading-6 hover:bg-gray-50"
+                      to={item.href}
+                      className="group relative flex items-center gap-x-4 rounded-lg p-1 text-sm hover:bg-gray-50"
                     >
                       <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                        <item.icon aria-hidden="true" className="h-6 w-6 text-gray-600 group-hover:text-indigo-600" />
+                        <item.icon aria-hidden="true" className="h-6 w-6 text-gray-600 group-hover:text-green-600" />
                       </div>
                       <div className="flex-auto">
                         <a href={item.href} className="block font-semibold text-gray-900">
@@ -124,7 +140,7 @@ export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
                         </a>
                         <p className="mt-1 text-gray-600">{item.description}</p>
                       </div>
-                    </div>
+                    </NavLink>
                   ))}
                 </div>
                 <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
@@ -206,6 +222,13 @@ export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
                     <IoIosLogIn className='font-bold text-xl' />
                   </NavLink>
                 </div>
+              )
+            }
+
+
+            {
+              (auth && user.role === 'buyer') && (
+                <CartIcon></CartIcon>
               )
             }
 
