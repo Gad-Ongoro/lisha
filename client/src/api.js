@@ -43,6 +43,7 @@ api.interceptors.request.use(
                 console.error('Token refresh failed:', error);
                 localStorage.removeItem('access');
                 localStorage.removeItem('refresh');
+                localStorage.clear();
                 window.location.href = '/account/signin';
                 return Promise.reject(error);
             }

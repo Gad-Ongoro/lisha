@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import api from "../../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../../constants";
 import { useState, useEffect } from "react";
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 function ProtectedRoute({ children }) {
@@ -48,7 +49,13 @@ function ProtectedRoute({ children }) {
     };
 
     if (isAuthorized === null) {
-        return <div>Loading...</div>;
+        return (
+            <div className='flex gap-x-6 justify-center items-center h-screen'>
+                <CircularProgress />
+                <CircularProgress />
+                <CircularProgress />
+            </div>
+        );
     }
 
     return isAuthorized ? children : <Navigate to="/account/signin" />;
