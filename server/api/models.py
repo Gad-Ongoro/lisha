@@ -37,7 +37,7 @@ class Profile(models.Model):
     phone = models.CharField(max_length=100, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=100, null=True, blank=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures', null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='gofoods_profile_imgs', null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     
 # product
@@ -52,7 +52,7 @@ class Product(models.Model):
     unit_of_measurement = models.CharField(max_length=20)
     perishable = models.BooleanField()
     expiration_date = models.DateField()
-    image = models.ImageField(upload_to='product_images/')
+    image = models.ImageField(upload_to='gofoods_product_imgs')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -69,6 +69,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+# cart
 class Cart(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.ForeignKey(CustomUser, related_name='carts', on_delete=models.CASCADE)
