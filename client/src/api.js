@@ -2,7 +2,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
 
-const baseURL = 'http://localhost:8000/api/';
+const baseURL = process.env.REACT_APP_API_URL;
 
 let accessToken = localStorage.getItem('access') || '';
 let refreshToken = localStorage.getItem('refresh') || '';
