@@ -112,7 +112,7 @@ class MpesaGateWay:
             "PartyB": self.business_shortcode,
             "PhoneNumber": phonenumber,
             "CallBackURL": "https://mydomain.com/pat",
-            "AccountReference": "Mpesa Payment",
+            "AccountReference": "GOFoods",
             "TransactionDesc": "Payment",
         }
 
