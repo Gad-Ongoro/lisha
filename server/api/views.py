@@ -188,6 +188,19 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return models.Product.objects.filter(user=self.request.user)
     
+# cart
+class CartListCreateView(generics.ListCreateAPIView):
+    queryset = models.Cart.objects.all()
+    serializer_class = serializers.CartSerializer
+    permission_classes = [IsAuthenticated]
+    
+class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = serializers.CartSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return models.Cart.objects.filter(user=self.request.user)
+    
 # order
 class OrderListCreateView(generics.ListCreateAPIView):
     queryset = models.Order.objects.all()
