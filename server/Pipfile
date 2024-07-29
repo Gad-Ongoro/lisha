@@ -20,6 +20,12 @@ faker = "*"
 djoser = "*"
 django-rest-auth = "*"
 djangorestframework-simplejwt = {extras = ["blacklist"], version = "*"}
+django-storages = "*"
+boto3 = "*"
+dj-database-url = "*"
+whitenoise = "*"
+psycopg2 = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
