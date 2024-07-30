@@ -16,6 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { NavLink, useNavigate } from 'react-router-dom';
 import AnimatedXPage from '../AnimatedXPage';
 import { AppContext } from '../../App';
+import ReCAPTCHA from "react-google-recaptcha";
 import api from '../../api';
 
 function Copyright(props) {
@@ -37,126 +38,135 @@ export default function SignIn() {
   const { setAuth } = React.useContext(AppContext);
   const navigate = useNavigate();
   const [inputs, setInputs] = React.useState({});
+  const [recaptchaValue, setRecaptchaValue] = React.useState(null);
 
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
-    setInputs(values => ({...values, [name]: value}))
-  }
+    setInputs(values => ({...values, [name]: value}));
+  };
+
+  const handleRecaptchaChange = (value) => {
+    setRecaptchaValue(value);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    try{
-      api.post('token/', inputs)
+    if (!recaptchaValue) {
+      enqueueSnackbar('Please complete the ReCAPTCHA', { variant: 'error' });
+      return;
+    }
+    try {
+      api.post('token/', { ...inputs, recaptcha: recaptchaValue })
       .then((res) => {
-        console.log(res);
         if(res.status === 200){
           const user_id = jwtDecode(res.data.access).user_id;
           localStorage.setItem('access', res.data.access);
           localStorage.setItem('refresh', res.data.refresh);
           setAuth(true);
-          enqueueSnackbar(`Successfully logged in `, { variant: 'success' });
+          enqueueSnackbar(`Successfully logged in`, { variant: 'success' });
           navigate(`/account/${user_id}/dashview`);
         }
       })
       .catch((err) => {
         enqueueSnackbar(`${err.response.data.detail}`, { variant: 'error' });
-        console.log(err);
-      })
-    }catch(err){
+      });
+    } catch (err) {
       enqueueSnackbar(`${err.response.data.detail}`, { variant: 'error' });
-      console.log(err);
     }
   };
 
   return (
     <div className='bg-gray-900'>
-		<AnimatedXPage>
-      <ThemeProvider theme={defaultTheme}>
-        <Grid container component="main" sx={{ height: '100vh' }}>
-          <CssBaseline />
-          <Grid
-            item
-            xs={false}
-            sm={4}
-            md={7}
-            sx={{
-              backgroundImage:
-                'url("/images/signinimg.jpg")',
-              backgroundColor: (t) =>
-                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-              backgroundSize: 'cover',
-              backgroundPosition: 'left',
-            }}
-          />
-          <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-            <Box
+      <AnimatedXPage>
+        <ThemeProvider theme={defaultTheme}>
+          <Grid container component="main" sx={{ height: '100vh' }}>
+            <CssBaseline />
+            <Grid
+              item
+              xs={false}
+              sm={4}
+              md={7}
               sx={{
-                my: 8,
-                mx: 4,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
+                backgroundImage: 'url("/images/signinimg.jpg")',
+                backgroundColor: (t) =>
+                  t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+                backgroundSize: 'cover',
+                backgroundPosition: 'left',
               }}
-            >
-              <NavLink to={"/"}>
-                <h2 className='text-green-500 text-3xl font-bold'>GOFoods</h2>
-              </NavLink>
-              <h2 className='font-bold text-2xl'>Welcome Back!</h2>
-              <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  autoFocus
-                  onChange={handleChange}
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  onChange={handleChange}
-                />
-                <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Remember me"
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  Sign In
-                </Button>
-                <Grid container>
-                  <Grid item xs>
-                    <NavLink to="/password/reset" variant="body2">
-                      Forgot password?
-                    </NavLink>
+            />
+            <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+              <Box
+                sx={{
+                  my: 8,
+                  mx: 4,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <NavLink to={"/"}>
+                  <h2 className='text-green-500 text-3xl font-bold'>GOFoods</h2>
+                </NavLink>
+                <h2 className='font-bold text-2xl'>Welcome Back!</h2>
+                <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    autoFocus
+                    onChange={handleChange}
+                  />
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    onChange={handleChange}
+                  />
+                  {/* <FormControlLabel
+                    control={<Checkbox value="remember" color="primary" />}
+                    label="Remember me"
+                  /> */}
+                  <ReCAPTCHA
+                    sitekey={process.env.REACT_APP_GOOGLE_RECAPTCHA_SITE_KEY}
+                    onChange={handleRecaptchaChange}
+                  />
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    Sign In
+                  </Button>
+                  <Grid container>
+                    <Grid item xs>
+                      <NavLink to="/password/reset" variant="body2">
+                        Forgot password?
+                      </NavLink>
+                    </Grid>
+                    <Grid item>
+                      <NavLink to="/account/usertype" variant="body2">
+                        Don't have an account? <span className='text-blue-500 cursor-pointer hover:text-blue-600 transition duration-300 ease-in'>Sign Up</span>
+                      </NavLink>
+                    </Grid>
                   </Grid>
-                  <Grid item>
-                    <NavLink to="/account/usertype" variant="body2">
-                      Don't have an account? <span className='text-blue-500 cursor-pointer hover:text-blue-600 transition duration-300 ease-in'>Sign Up</span>
-                    </NavLink>
-                  </Grid>
-                </Grid>
-                <Copyright sx={{ mt: 5 }} />
+                  <Copyright sx={{ mt: 5 }} />
+                </Box>
               </Box>
-            </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      </ThemeProvider>
-		</AnimatedXPage>
+        </ThemeProvider>
+      </AnimatedXPage>
     </div>
   );
-};
+}
