@@ -11,7 +11,7 @@ import { FaRegUser } from "react-icons/fa";
 import { AppContext } from '../../App';
 import api from '../../api';
 import { Button, Popover, PopoverButton, PopoverGroup, PopoverPanel } from '@headlessui/react';
-
+import { IoIosListBox } from "react-icons/io";
 import { Bars3Icon, ChartPieIcon, CursorArrowRaysIcon, } from '@heroicons/react/24/outline';
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid';
 import { LuVegan } from "react-icons/lu";
@@ -23,7 +23,8 @@ import { GiGrainBundle } from "react-icons/gi";
 import { GiHoneyJar } from "react-icons/gi";
 import { LuMilk } from "react-icons/lu";
 
-const products = [
+const categoriesList = [
+  { name: 'All', description: 'All products.', href: '/products', icon: IoIosListBox },
   { name: 'Vegetables', description: 'Fresh, nutritious vegetables for healthy meals.', href: '/products/vegetables', icon: LuVegan },
   { name: 'Fruits', description: 'Juicy, ripe fruits picked fresh for and tasty treats.', href: '/products/fruits', icon: GiFruitBowl },
   { name: 'Eggs', description: 'Rich in flavor and essential nutrients.', href: '/products/eggs', icon: TbEggs },
@@ -43,9 +44,11 @@ const currency = [
   { name: 'United States Dollar', code: 'USD' },
 ]
 
-export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
+export default function NavBar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { auth, setAuth, user_id, user, setSnackBarOpen, setCartOpen } = useContext(AppContext);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const { auth, setAuth, user_id, user, setSnackBarOpen, setCartOpen, mobileMenuOpen, setMobileMenuOpen, products, setProducts } = useContext(AppContext);
   const [snackBarMsg, setSnackBarMsg] = useState('');
   const [ snackBarSeverity, setSnackBarSeverity ] = React.useState('');
   const refreshToken = localStorage.getItem('refresh');
@@ -65,6 +68,21 @@ export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSearchChange = async (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    if (term.length > 1) {
+      try {
+        const response = await api.get(`products/?search=${term}`);
+        setSearchResults(response.data);
+      } catch (error) {
+        console.error('Search Error:', error);
+      }
+    } else {
+      setSearchResults([]);
+    }
+  };
 
   const handleLogout = async () => {
     if (!refreshToken) {
@@ -124,10 +142,10 @@ export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
                 className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
               >
                 <div className="p-1">
-                  {products.map((item) => (
+                  {categoriesList.map((item) => (
                     <NavLink
                       key={item.name}
-                      to={item.href}
+                      to={`/products/${item.name}`}
                       className="group relative flex items-center gap-x-4 rounded-lg p-1 text-sm hover:bg-gray-50"
                     >
                       <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
@@ -161,7 +179,24 @@ export default function NavBar( {mobileMenuOpen, setMobileMenuOpen} ) {
             <div>
               <div className='flex items-center bg-gray-300 gap-x-1 px-2 rounded-full'>
                 <IoSearch className='text-gray-500' />
-                <input type="search" placeholder='Search here' className='rounded-full p-1 bg-gray-300 outline-none'></input>
+                <input type="search" placeholder='Search here' onChange={handleSearchChange} className='rounded-full p-1 bg-gray-300 outline-none'></input>
+                {searchResults.length > 0 && (
+                  <ul className="absolute left-0 mt-12 w-full bg-white shadow-lg rounded-lg">
+                    {searchResults.map((product) => (
+                      <li
+                        key={product.id}
+                        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                        onClick={() => {
+                          setSearchTerm('');
+                          setSearchResults([]);
+                          navigate(`/products/${product.category}/${product.id}`);
+                        }}
+                      >
+                        {product.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
 
