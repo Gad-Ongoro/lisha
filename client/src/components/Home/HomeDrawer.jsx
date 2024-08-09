@@ -10,17 +10,32 @@ import api from '../../api';
 import { FaRegUser } from "react-icons/fa";
 import { ChartPieIcon, CursorArrowRaysIcon, } from '@heroicons/react/24/outline';
 
+import { LuVegan } from "react-icons/lu";
+import { GiFruitBowl } from "react-icons/gi";
+import { TbEggs } from "react-icons/tb";
+import { GiDoubleFish } from "react-icons/gi";
+import { TbMeat } from "react-icons/tb";
+import { GiGrainBundle } from "react-icons/gi";
+import { GiHoneyJar } from "react-icons/gi";
+import { LuMilk } from "react-icons/lu";
+
 const products = [
-  { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
-  { name: 'Engagement', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
+  { name: 'Vegetables', description: 'Fresh, nutritious vegetables for healthy meals.', href: '/products/vegetables', icon: LuVegan },
+  { name: 'Fruits', description: 'Juicy, ripe fruits picked fresh for and tasty treats.', href: '/products/fruits', icon: GiFruitBowl },
+  { name: 'Eggs', description: 'Rich in flavor and essential nutrients.', href: '/products/eggs', icon: TbEggs },
+  { name: 'Fish & Seafood', description: 'Sustainably sourced for delicious, healthy meals.', href: '/products/fish&seafood', icon: GiDoubleFish },
+  { name: 'Meat & Poultry', description: 'Farm-raised for flavor and quality.', href: '/products/meat&poultry', icon: TbMeat },
+  { name: 'Grains & Cereals', description: 'Nutritious grains and cereals for meals', href: '/products/grains&cereals', icon: GiGrainBundle },
+  { name: 'Bee Products', description: 'Natural bee products, pure and beneficial for wellness.', href: '/products/beeproducts', icon: GiHoneyJar },
+  { name: 'Dairy Products', description: 'Rich in protein and essential nutrients.', href: '/products/dairyproducts', icon: LuMilk },
 ]
 const callsToAction = [
   { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
   { name: 'Contact sales', href: '#', icon: PhoneIcon },
 ]
 
-export default function HomeDrawer( {mobileMenuOpen, setMobileMenuOpen} ) {
-  const { auth, user_id, setAuth, setSnackBarOpen } = useContext(AppContext);
+export default function HomeDrawer() {
+  const { auth, user_id, setAuth, setSnackBarOpen, mobileMenuOpen, setMobileMenuOpen } = useContext(AppContext);
   const [snackBarMsg, setSnackBarMsg] = useState('');
   const [ snackBarSeverity, setSnackBarSeverity ] = useState('');
   const refreshToken = localStorage.getItem('refresh');
@@ -98,19 +113,28 @@ export default function HomeDrawer( {mobileMenuOpen, setMobileMenuOpen} ) {
                         <div className="space-y-2 py-6">
                           <Disclosure as="div" className="-mx-3">
                             <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                              Product
+                              Products
                               <ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none group-data-[open]:rotate-180" />
                             </DisclosureButton>
                             <DisclosurePanel className="mt-2 space-y-2">
                               {[...products, ...callsToAction].map((item) => (
-                                <DisclosureButton
+                                <NavLink
                                   key={item.name}
-                                  as="a"
-                                  href={item.href}
-                                  className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                  to={`/products/${item.name}`}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                  className="group relative flex items-center gap-x-4 rounded-lg p-1 text-sm hover:bg-gray-50"
                                 >
-                                  {item.name}
-                                </DisclosureButton>
+                                  <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                    <item.icon aria-hidden="true" className="h-6 w-6 text-gray-600 group-hover:text-green-600" />
+                                  </div>
+                                  <div className="flex-auto">
+                                    <a href={item.href} className="block font-semibold text-gray-900">
+                                      {item.name}
+                                      <span className="absolute inset-0" />
+                                    </a>
+                                    <p className="mt-1 text-gray-600">{item.description}</p>
+                                  </div>
+                                </NavLink>
                               ))}
                             </DisclosurePanel>
                           </Disclosure>
