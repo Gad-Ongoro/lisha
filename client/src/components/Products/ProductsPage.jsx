@@ -7,7 +7,7 @@ import AnimatedXPage from '../AnimatedXPage';
 import { AppContext } from '../../App';
 
 export default function ProductsPage() {
-  const { productQuickViewOpen, setProductQuickViewOpen, products, setProducts } = useContext(AppContext);
+  const { productQuickViewOpen, setProductQuickViewOpen, products, setProducts, currency, currencyExchangeRates } = useContext(AppContext);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const { category } = useParams();
 
@@ -43,7 +43,15 @@ export default function ProductsPage() {
                   </div>
                   <h3 className="mt-4 text-sm text-gray-700">{product.name}</h3>
                   <p className="mt-1 font-medium text-gray-900"><strong>Category: </strong>{product.category}</p>
-                  <p className="mt-1 font-medium text-gray-900"><strong>Price: </strong> {product.price} per {product.unit_of_measurement}</p>
+                  <p className="mt-1 font-medium text-gray-900"><strong>Price: </strong> {currency}
+                    {
+                      currency === 'KES' && <strong> {(product.price * currencyExchangeRates.KES).toFixed(2)} </strong>
+                    }
+                    {
+                      currency === 'USD' && <strong> {(product.price * currencyExchangeRates.USD).toFixed(2)} </strong>
+                    }
+                    per {product.unit_of_measurement}
+                  </p>
                   <p className="mt-1 font-medium text-gray-900"><strong>Stock: </strong> {product.quantity_available} {product.unit_of_measurement}s</p>
                 </div>
               ))}

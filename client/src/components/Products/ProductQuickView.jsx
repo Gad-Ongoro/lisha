@@ -7,12 +7,8 @@ import { enqueueSnackbar } from 'notistack';
 import { AppContext } from '../../App';
 import api from '../../api';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
 export default function ProductQuickView({ product }) {
-  const { productQuickViewOpen, setProductQuickViewOpen, user } = useContext(AppContext);
+  const { productQuickViewOpen, setProductQuickViewOpen, user, currency, currencyExchangeRates } = useContext(AppContext);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   const {
@@ -68,8 +64,8 @@ export default function ProductQuickView({ product }) {
               </button>
 
               <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8">
-                <div className="aspect-h-3 aspect-w-2 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-5">
-                  <img alt={name} src={image} className="object-cover object-center" />
+                <div className="grid justify-center items-center aspect-h-3 aspect-w-2 overflow-hidden rounded-lg sm:col-span-4 lg:col-span-5">
+                  <img alt={name} src={image} className="object-cover object-center h-64 w-60 rounded-lg" />
                 </div>
                 <div className="sm:col-span-8 lg:col-span-7">
                   <h2 className="text-2xl font-bold text-gray-900 sm:pr-12">{name}</h2>
@@ -79,10 +75,17 @@ export default function ProductQuickView({ product }) {
                       Product information
                     </h3>
 
-                    <p className="text-2xl text-gray-900">{price}</p>
+                    <p className="text-2xl text-gray-900">{currency}
+                      {
+                        currency === 'KES' && <strong> {(price * currencyExchangeRates.KES).toFixed(2)}</strong>
+                      }
+                      {
+                        currency === 'USD' && <strong> {(price * currencyExchangeRates.USD).toFixed(2)}</strong>
+                      }
+                    </p>
                     <p className="mt-4 text-sm text-gray-700">{description}</p>
                     <p className="mt-2 text-sm text-gray-700"><strong>Category:</strong> {category}</p>
-                    <p className="mt-2 text-sm text-gray-700"><strong>Quantity Available:</strong> {quantity_available} {unit_of_measurement}</p>
+                    <p className="mt-2 text-sm text-gray-700"><strong>Quantity Available:</strong> {quantity_available} {unit_of_measurement}s</p>
                     <p className="mt-2 text-sm text-gray-700"><strong>Perishable:</strong> {perishable ? 'Yes' : 'No'}</p>
                     {perishable && <p className="mt-2 text-sm text-gray-700"><strong>Expiration Date:</strong> {expiration_date}</p>}
                   </section>

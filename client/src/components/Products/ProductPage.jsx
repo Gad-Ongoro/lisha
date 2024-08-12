@@ -11,7 +11,7 @@ import api from '../../api';
 
 export default function ProductPage() {
 	const params = useParams();
-	const { user, products } = useContext(AppContext);
+	const { user, products, currency, currencyExchangeRates } = useContext(AppContext);
 	const product = products.filter((product) => product.id === params.product_id)[0];
   const [selectedQuantity, setSelectedQuantity] = useState(1);
 
@@ -50,7 +50,7 @@ export default function ProductPage() {
                 <img
                   alt={product.name}
                   src={product.image}
-                  className="w-64 h-64 object-cover object-center"
+                  className="w-64 h-64 object-cover object-center rounded-lg"
                 />
               </div>
             </div>
@@ -62,7 +62,15 @@ export default function ProductPage() {
                 <h2 className="sr-only">Product information</h2>
                 <p className="mt-2 text-xl text-gray-700"><strong>Category: </strong>{product.category}</p>
                 <p className="mt-2 text-xl text-gray-700"><strong>Description: </strong>{product.description}</p>
-                <p className="mt-2 text-xl text-gray-700"><strong>Price: </strong>{product.price}</p>
+                <p className="mt-2 text-xl text-gray-700">
+                  {
+                    currency === 'KES' && <span><strong>Price: </strong>{currency} {(product.price * currencyExchangeRates.KES).toFixed(2)}</span>
+                  }
+                  {
+                    currency === 'USD' && <span><strong>Price: </strong>{currency} {(product.price * currencyExchangeRates.USD).toFixed(2)}</span>
+                  }
+                  
+                </p>
                 <p className="mt-2 text-xl text-gray-700"><strong>Quantity Available:</strong> {product.quantity_available} {product.unit_of_measurement}s</p>
                 <p className="mt-2 text-xl text-gray-700"><strong>Perishable:</strong> {product.perishable ? 'Yes' : 'No'}</p>
                 {/* {product.perishable && <p className="mt-2 text-xl text-gray-700"><strong>Expiration Date:</strong> {product.expiration_date}</p>} */}
