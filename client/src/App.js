@@ -14,6 +14,7 @@ import ProductsPage from './components/Products/ProductsPage';
 import ProductPage from './components/Products/ProductPage';
 import Cart from './components/Cart/Cart';
 import api from './api';
+import { currencyConverter } from './services/CurrencyConverter';
 export const AppContext = createContext();
 
 function App() {
@@ -24,7 +25,10 @@ function App() {
   const [ cartOpen, setCartOpen ] = useState(false);
   const [ products, setProducts ] = useState([]);
   const [ productQuickViewOpen, setProductQuickViewOpen ] = useState(false);
-  const currency = localStorage.getItem('currency') ? localStorage.getItem('currency') : 'KES';
+  const defaultCurrency = localStorage.getItem('currency') ? localStorage.getItem('currency') : 'KES';
+  const [ currency, setCurrency ] = useState(defaultCurrency);
+  const defaultCurrencyExchangeRates = localStorage.getItem('currencyExchangeRates') ? JSON.parse(localStorage.getItem('currencyExchangeRates')) : {};
+  const [ currencyExchangeRates, setCurrencyExchangeRates ] = useState(defaultCurrencyExchangeRates);
   const accessToken = localStorage.getItem('access');
   const refreshToken = localStorage.getItem('refresh');
   const user_id = accessToken !== null || undefined ? jwtDecode(accessToken).user_id : null;
@@ -46,6 +50,27 @@ function App() {
 			console.error(error);
 		}
 	};
+
+  // currency conversion
+  useEffect(() => {
+    const currency = localStorage.getItem('currency');
+    if ((currency === null) || (currency === undefined)) {
+      localStorage.setItem('currency', 'KES');
+    }
+    const fetchCurrencyExchangeRates = async () => {
+      try {
+        const response = await currencyConverter();
+        setCurrencyExchangeRates(response.conversion_rates);
+        localStorage.setItem('currencyExchangeRates', JSON.stringify(response.conversion_rates));
+      } catch (error) {
+        console.error('Error fetching currency exchange rates:', error);
+      }
+    }
+
+    if (defaultCurrencyExchangeRates.KES === undefined || defaultCurrencyExchangeRates.KES === null) {
+      fetchCurrencyExchangeRates();
+    }
+  }, [currency]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -74,7 +99,8 @@ function App() {
       <AppContext.Provider value={{ navigate, accessToken, refreshToken,
           auth, setAuth, user_id, user, snackBarOpen, setSnackBarOpen, scrollToTop, 
           cartOpen, setCartOpen, productCategory, setProductCategory,
-          productQuickViewOpen, setProductQuickViewOpen, currency, mobileMenuOpen, setMobileMenuOpen,
+          productQuickViewOpen, setProductQuickViewOpen, currency, currencyExchangeRates, setCurrency,
+          mobileMenuOpen, setMobileMenuOpen,
           products, setProducts
          }}
       >
