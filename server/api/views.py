@@ -197,13 +197,16 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     
 # cart
 class CartListCreateView(generics.ListCreateAPIView):
-    queryset = models.Cart.objects.all()
+    # queryset = models.Cart.objects.all()
     serializer_class = serializers.CartSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    def get_queryset(self):
+        return models.Cart.objects.filter(user=self.request.user)
     
 class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.CartSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
     def get_queryset(self):
         return models.Cart.objects.filter(user=self.request.user)
