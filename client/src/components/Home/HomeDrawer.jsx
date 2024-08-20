@@ -1,14 +1,16 @@
 import { useState, useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react';
+import { Popover, PopoverButton, PopoverGroup, PopoverPanel } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { IoSearch } from "react-icons/io5";
 import { Button, Disclosure, DisclosureButton, DisclosurePanel, } from '@headlessui/react';
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid';
 import { TbLogout2 } from "react-icons/tb";
 import { AppContext } from '../../App';
 import api from '../../api';
 import { FaRegUser } from "react-icons/fa";
-import { ChartPieIcon, CursorArrowRaysIcon, } from '@heroicons/react/24/outline';
+import { enqueueSnackbar } from 'notistack';
 
 import { LuVegan } from "react-icons/lu";
 import { GiFruitBowl } from "react-icons/gi";
@@ -34,8 +36,13 @@ const callsToAction = [
   { name: 'Contact sales', href: '#', icon: PhoneIcon },
 ]
 
+const currencies = [
+  { name: 'Kenyan Shilling', code: 'KES' },
+  { name: 'United States Dollar', code: 'USD' },
+]
+
 export default function HomeDrawer() {
-  const { auth, user_id, setAuth, setSnackBarOpen, mobileMenuOpen, setMobileMenuOpen } = useContext(AppContext);
+  const { auth, user_id, setAuth, setSnackBarOpen, mobileMenuOpen, setMobileMenuOpen, currency, setCurrency, setSearchModalOpen } = useContext(AppContext);
   const [snackBarMsg, setSnackBarMsg] = useState('');
   const [ snackBarSeverity, setSnackBarSeverity ] = useState('');
   const refreshToken = localStorage.getItem('refresh');
@@ -138,6 +145,44 @@ export default function HomeDrawer() {
                               ))}
                             </DisclosurePanel>
                           </Disclosure>
+
+                          <div onClick={() => {setSearchModalOpen(true); setMobileMenuOpen(false);}} className='flex items-center gap-x-1 py-2 rounded-full'>
+                            <strong>Search Products</strong>
+                            <div>
+                              <IoSearch size={25} className='text-gray-500' />
+                            </div>
+                          </div>
+
+                          <Popover className="relative">
+                            <PopoverButton className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 outline-none">
+                              <span className='font-bold'>Currency</span> <span className='text-green-700'>{currency}</span>
+                              <ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none text-gray-400" />
+                            </PopoverButton>
+
+                            <PopoverPanel
+                              transition
+                              className="absolute -left-4 top-full z-10 mt-3 w-64 max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
+                            >
+                              <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-green-50">
+                                {currencies.map((item) => (
+                                  <p
+                                    key={item.code}
+                                    href={item.href}
+                                    onClick={() => {
+                                      setCurrency(item.code);
+                                      enqueueSnackbar(`Currency set to ${item.code}`, { variant: 'success' });
+                                      localStorage.setItem('currency', item.code);
+                                      }
+                                    }
+                                    className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100 cursor-pointer"
+                                  >
+                                    {item.code}
+                                  </p>
+                                ))}
+                              </div>
+                            </PopoverPanel>
+                          </Popover>
+
                           <a
                             href="#"
                             className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
