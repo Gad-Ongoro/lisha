@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { NavLink, useNavigate } from 'react-router-dom';
 import AnimatedXPage from '../AnimatedXPage';
+import { helix } from 'ldrs';
 import { AppContext } from '../../App';
 import ReCAPTCHA from "react-google-recaptcha";
 import api from '../../api';
@@ -35,7 +36,8 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
-  const { setAuth } = React.useContext(AppContext);
+  helix.register();
+  const { setAuth, loading, setLoading } = React.useContext(AppContext);
   const navigate = useNavigate();
   const [inputs, setInputs] = React.useState({});
   const [recaptchaValue, setRecaptchaValue] = React.useState(null);
@@ -57,6 +59,7 @@ export default function SignIn() {
       return;
     }
     try {
+      setLoading(true);
       api.post('token/', { ...inputs, recaptcha: recaptchaValue })
       .then((res) => {
         if(res.status === 200){
@@ -64,17 +67,31 @@ export default function SignIn() {
           localStorage.setItem('access', res.data.access);
           localStorage.setItem('refresh', res.data.refresh);
           setAuth(true);
+          setLoading(false);
           enqueueSnackbar(`Successfully logged in`, { variant: 'success' });
           navigate(`/account/${user_id}/dashview`);
-        }
+        };
       })
       .catch((err) => {
+        setLoading(false);
         enqueueSnackbar(`${err.response.data.detail}`, { variant: 'error' });
       });
     } catch (err) {
+      setLoading(false);
       enqueueSnackbar(`${err.response.data.detail}`, { variant: 'error' });
     }
   };
+
+  const signinLoader = (
+    <div className='flex items-center justify-center rotate-90'>
+			<l-helix
+				size="50"
+				speed="2.5" 
+				color="green" 
+        className=""
+			></l-helix>
+		</div>
+  );
 
   return (
     <div className='bg-gray-900'>
@@ -136,18 +153,22 @@ export default function SignIn() {
                     control={<Checkbox value="remember" color="primary" />}
                     label="Remember me"
                   /> */}
-                  <ReCAPTCHA
-                    sitekey={process.env.REACT_APP_GOOGLE_RECAPTCHA_SITE_KEY}
-                    onChange={handleRecaptchaChange}
-                  />
+                  <div className='grid justify-center items-center'>
+                    <ReCAPTCHA
+                      sitekey={process.env.REACT_APP_GOOGLE_RECAPTCHA_SITE_KEY}
+                      onChange={handleRecaptchaChange}
+                    />
+                  </div>
                   <Button
                     type="submit"
                     fullWidth
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
+                    disabled={loading}
                   >
                     Sign In
                   </Button>
+                  { loading && signinLoader }
                   <Grid container>
                     <Grid item xs>
                       <NavLink to="/password/reset" variant="body2">

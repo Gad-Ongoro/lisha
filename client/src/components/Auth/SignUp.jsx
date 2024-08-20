@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate, NavLink } from 'react-router-dom';
 import AnimatedXPage from '../AnimatedXPage';
+import { helix } from 'ldrs';
 import api from '../../api';
 import SnackBar from '../Notifications/SnackBar';
 import { AppContext } from '../../App';
@@ -34,7 +35,8 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-	const { snackBarOpen, setSnackBarOpen } = React.useContext(AppContext);
+	helix.register();
+	const { loading, setLoading, snackBarOpen, setSnackBarOpen } = React.useContext(AppContext);
 	const [ snackBarMsg, setSnackBarMsg ] = React.useState('');
 	const [ snackBarSeverity, setSnackBarSeverity ] = React.useState('');
 	const navigate = useNavigate();
@@ -50,9 +52,11 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
 		try{
+			setLoading(true);
 			api.post('users/register/', inputs)
 			.then((res) => {
 				if(res.status === 201){
+					setLoading(false);
 					setSnackBarSeverity('success');
 					setSnackBarMsg('Successufully registered! Please check your email for a verification OTP!');
 					setSnackBarOpen(true);
@@ -61,6 +65,7 @@ export default function SignUp() {
 				}
 			})
 			.catch((err) => {
+				setLoading(false);
 				let responseDataObj = err.response.data;
 				let resEntriesData = Object.entries(responseDataObj)[0][1][0];
 				console.log(resEntriesData);
@@ -70,6 +75,7 @@ export default function SignUp() {
 			})
 		}
 		catch(err){
+			setLoading(false);
 			let responseDataObj = err.response.data;
 			let resEntriesData = Object.entries(responseDataObj)[0][1][0];
 			console.log(resEntriesData);
@@ -78,6 +84,17 @@ export default function SignUp() {
 			setSnackBarOpen(true);
 		}
   };
+
+	const signUpLoader = (
+    <div className='flex items-center justify-center rotate-90'>
+			<l-helix
+				size="100"
+				speed="2.5" 
+				color="green" 
+        className=""
+			></l-helix>
+		</div>
+  );
 
   return (
 		<div className='bg-gray-900'>
@@ -189,6 +206,7 @@ export default function SignUp() {
 									>
 										Sign Up
 									</Button>
+									{ loading && signUpLoader }
 									<Grid container justifyContent="flex-end">
 										<Grid item>
 											<NavLink to="/account/signin" variant="body2">
