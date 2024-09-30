@@ -1,34 +1,23 @@
 from django.db import models
 from uuid import uuid4
 from django.db import models
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 
-# Create your models here.
-# class Transaction(models.Model):
-#     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-#     transaction_id = models.CharField(max_length=100)
-#     status = models.CharField(max_length=20)
-#     phone_number = models.CharField(max_length=20)
-#     amount = models.DecimalField(max_digits=10, decimal_places=2)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
+User = get_user_model()
 
-class AbstractBaseModel(models.Model):
+class Transaction(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=13)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    checkout_request_id = models.CharField(max_length=100, unique=True)
+    merchant_request_id = models.CharField(max_length=100, unique=True)
+    mpesa_receipt_number = models.CharField(max_length=100, blank=True, null=True)
+    status = models.CharField(max_length=20, default='Pending')
+    result_description = models.TextField(blank=True, null=True)
+    transaction_date = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-class MpesaResponseBody(AbstractBaseModel):
-    body = models.JSONField()
-
-
-class Transaction(AbstractBaseModel):
-    phonenumber = models.CharField(max_length=100)
-    amount = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    receipt_no = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.receipt_no
+        return f"{self.phone_number} - {self.amount} - {self.status}"

@@ -1,48 +1,72 @@
-from django.forms.models import model_to_dict
-from rest_framework import views, response, status
-from rest_framework.permissions import IsAuthenticated
-from .serializers import SendSTKPushSerializer, MpesaResponseBodySerializer, TransactionSerializer
-from .models import MpesaResponseBody, Transaction
+# payments/views.py
+from rest_framework import generics, permissions, status
+from rest_framework.views import APIView
+from django.http import JsonResponse
+from rest_framework.response import Response
+from .models import Transaction
+from .utils import lipa_na_mpesa_stk_push
+from .serializers import TransactionSerializer
+from datetime import datetime
 
-class SendSTKPushView(views.APIView):
-    permission_classes = [IsAuthenticated]
-    def post(self, request, format=None):
-        serializer = SendSTKPushSerializer(data=request.data)
-        if serializer.is_valid():
-            res = serializer.save()
-            return response.Response(res, status=status.HTTP_200_OK)
-        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-class MpesaCallbackView(views.APIView):
-    permission_classes = [IsAuthenticated]
-    def post(self, request, format=None):
-        body = request.data
+# Payment API View
+class MpesaPaymentView(generics.CreateAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-        if body:
-            mpesa = MpesaResponseBody.objects.create(body=body)
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        phone_number = request.data.get('phone_number')
+        amount = request.data.get('amount')
 
-            mpesa_body = mpesa.body
+        response = lipa_na_mpesa_stk_push(phone_number, amount)
+        if response.get('ResponseCode') == '0':
+            transaction = Transaction.objects.create(
+                user = user,
+                phone_number=phone_number,
+                amount=amount,
+                checkout_request_id=response['CheckoutRequestID'],
+                merchant_request_id=response['MerchantRequestID']
+            )
+            return Response({"Response": response}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"error": "Failed to initiate payment", "Response": response}, status=status.HTTP_400_BAD_REQUEST)
+   
+class TransactionListView(generics.ListAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-            if mpesa_body['stkCallback']['ResultCode'] == 0:
-                transaction = Transaction.objects.create(
-                    amount=mpesa_body['Body']['stkCallback']['CallbackMetadata']['Item'][0]["Value"],
-                    receipt_no=mpesa_body['Body']['stkCallback']['CallbackMetadata']['Item'][1]["Value"],
-                    phonenumber=mpesa_body['Body']['stkCallback']['CallbackMetadata']['Item'][-1]["Value"],
-                )
+class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-            return response.Response({"message": "Callback received and processed successfully."})
-        return response.Response({"failed": "No Callback Received"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    def get(self, request, format=None):
-        response_bodies = MpesaResponseBody.objects.all()
-        serializer = MpesaResponseBodySerializer(response_bodies, many=True)
+# Callback URL
+class MpesaConfirmationView(APIView):
+    def post(self, request, *args, **kwargs):
+        data = request.data.get('Body', {}).get('stkCallback', {})
+        checkout_request_id = data.get('CheckoutRequestID')
+        result_code = data.get('ResultCode')
+        result_description = data.get('ResultDesc')
 
-        return response.Response({"responses": serializer.data})
+        try:
+            transaction = Transaction.objects.get(checkout_request_id=checkout_request_id)
+            
+            if result_code == 0:
+                # Payment was successful
+                transaction.status = 'Confirmed'
+                transaction.mpesa_receipt_number = data['CallbackMetadata']['Item'][1]['Value']
+                transaction_date_str = str(data['CallbackMetadata']['Item'][3]['Value'])
+                transaction.transaction_date = datetime.strptime(transaction_date_str, '%Y%m%d%H%M%S')
+                transaction.result_description = result_description
+            else:
+                # transaction failed/cancelled
+                transaction.status = 'Failed'
+                transaction.result_description = result_description
 
-class TransactionView(views.APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self, request, format=None):
-        transactions = Transaction.objects.all()
-        serializer = TransactionSerializer(transactions, many=True)
+            transaction.save()
+            return JsonResponse({"message": "Payment status updated"}, status=200)
 
-        return response.Response({"transactions": serializer.data})
+        except Transaction.DoesNotExist:
+            return JsonResponse({"error": "Transaction not found"}, status=404)
