@@ -53,10 +53,8 @@ class USSDAPIView(APIView):
                     )
 
                     # mpesa payment
-                    lipa_na_mpesa_stk_push(phone_number, total_price)
-                    
                     mpesa_number = str(phone_number).replace('+', '')
-                    response = lipa_na_mpesa_stk_push(mpesa_number, 1)
+                    response = lipa_na_mpesa_stk_push(mpesa_number, total_price)
                     if response.get('ResponseCode') == '0':
                         transaction = Transaction.objects.create(
                             phone_number=phone_number,
