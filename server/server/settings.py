@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'mpesa',
+    'google_oauth2',
+    'ussd',
     'rest_framework_simplejwt',
     'corsheaders',
     'phonenumber_field',
@@ -101,7 +103,17 @@ DATABASES = {
 
 DATABASES["default"] = dj_database_url.parse(os.environ.get("DATABASE_URL"))
 
-AUTH_USER_MODEL = 'api.CustomUser'
+AUTH_USER_MODEL = 'api.User'
+
+# Google Auth2
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI')
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+# AfricasTalking
+AFRICAS_TALKING_API_KEY = os.environ.get('AFRICAS_TALKING_API_KEY')
+AFRICAS_TALKING_USERNAME = os.environ.get('AFRICAS_TALKING_USERNAME')
 
 
 # Password validation
@@ -229,18 +241,18 @@ if USE_S3:
     AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
     # AWS_S3_SIGNATURE_NAME = 's3v4',
-    AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL =  None
     AWS_S3_VERIFY = True
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+    # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-    
+
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
