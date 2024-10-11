@@ -15,8 +15,10 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include(urls)),
     path('api/mpesa/', include(mpesa_urls)),
+    path('api/google/', include('google_oauth2.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/ussd/', include('ussd.urls')),
     
     # path('api/auth/', include('djoser.urls')),
     # path('api/auth/', include('djoser.urls.jwt')),
