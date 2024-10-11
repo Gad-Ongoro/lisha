@@ -27,6 +27,11 @@ whitenoise = "*"
 psycopg2 = "*"
 psycopg2-binary = "*"
 gunicorn = "*"
+africastalking = "*"
+google-api-python-client = "*"
+google-auth = "*"
+google-auth-oauthlib = "*"
+coverage = "*"
 
 [dev-packages]
 
