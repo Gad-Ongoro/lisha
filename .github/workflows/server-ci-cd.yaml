@@ -86,7 +86,7 @@ jobs:
 
   deploy:
     if: github.ref == 'refs/heads/main'
-    needs: build-and-test
+    needs: auto-merge
     runs-on: ubuntu-latest
 
     steps:
