@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -10,15 +11,30 @@ from . import models
 from . utils import send_normal_email
 
 # user
-class CustomUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.CustomUser
-        fields = ['id', 'first_name', 'last_name', 'username', 'email', 'role', 'otp_secret', 'is_verified', 'password', 'date_joined', 'updated_at']
-        extra_kwargs = {'password': {'write_only': True}, 'otp_secret': {'read_only': True}, 'is_verified': {'read_only': True}}
+        model = models.User
+        fields = ['id', 'first_name', 'last_name', 'email', 'is_verified', 'is_google_user', 'password', 'date_joined', 'updated_at']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'otp_secret': {'read_only': True},
+            'is_verified': {'read_only': True},
+            'is_google_user': {'read_only': True},
+        }
 
     def create(self, validated_data):
-        user = models.CustomUser.objects.create_user(**validated_data)
-        return user
+        if not validated_data.get('is_google_user', False):
+            validated_data['password'] = make_password(validated_data['password'])
+        return super(UserSerializer, self).create(validated_data)
+    
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance
     
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
@@ -28,8 +44,8 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         email = attrs.get('email')
-        if models.CustomUser.objects.filter(email=email).exists():
-            user= models.CustomUser.objects.get(email=email)
+        if models.User.objects.filter(email=email).exists():
+            user= models.User.objects.get(email=email)
             uidb64=urlsafe_base64_encode(smart_bytes(user.id))
             token = PasswordResetTokenGenerator().make_token(user)
             request=self.context.get('request')
@@ -64,7 +80,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
             confirm_password=attrs.get('confirm_password')
 
             user_id=force_str(urlsafe_base64_decode(uidb64))
-            user=models.CustomUser.objects.get(id=user_id)
+            user=models.User.objects.get(id=user_id)
             if not PasswordResetTokenGenerator().check_token(user, token):
                 raise AuthenticationFailed("reset link is invalid or has expired", 401)
             if password != confirm_password:

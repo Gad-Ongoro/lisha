@@ -1,34 +1,49 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from uuid import uuid4
 
 # Create your models here.
 # user
-class CustomUser(AbstractUser):
+class UserManager(BaseUserManager):
+    def create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        if not password:
+            raise ValueError('The Password field must be set')
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(email, password, **extra_fields)
+
+class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     email = models.EmailField(unique=True)
-    role = models.CharField(max_length=100)
+    username = None
     otp_secret = models.CharField(max_length=32, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
+    is_google_user = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
     
-    # Related_name to avoid clashes with built-in User model
-    groups = models.ManyToManyField('auth.Group', related_name='customuser_set', blank=True)
-    user_permissions = models.ManyToManyField('auth.Permission', related_name='customuser_set', blank=True)
-
-    def __init__(self, *args, **kwargs):
-        super(CustomUser, self).__init__(*args, **kwargs)
+    objects = UserManager()
 
     def __str__(self):
         return self.email
-    
+
 # profile
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     secondary_email = models.EmailField(null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     county = models.CharField(max_length=100, null=True, blank=True)
@@ -43,7 +58,7 @@ class Profile(models.Model):
 # product
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField()
     category = models.CharField(max_length=50)
@@ -60,11 +75,13 @@ class Product(models.Model):
 # order 
 class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(CustomUser, related_name='orders', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='orders', on_delete=models.CASCADE, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
     product = models.ForeignKey(Product, related_name='orders', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     order_status = models.CharField(max_length=20)
+    order_source = models.CharField(max_length=10, choices=[('web', 'Web'), ('ussd', 'USSD')], default='web')
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -72,7 +89,7 @@ class Order(models.Model):
 # cart
 class Cart(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(CustomUser, related_name='carts', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='carts', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='carts', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -84,8 +101,8 @@ class Cart(models.Model):
 class Review(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
-    reviewer = models.ForeignKey(CustomUser, related_name='reviews_given', on_delete=models.CASCADE)
-    reviewee = models.ForeignKey(CustomUser, related_name='reviews_received', on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(User, related_name='reviews_given', on_delete=models.CASCADE)
+    reviewee = models.ForeignKey(User, related_name='reviews_received', on_delete=models.CASCADE)
     rating = models.PositiveIntegerField()
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

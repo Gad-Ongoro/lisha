@@ -16,8 +16,8 @@ from . import serializers
 # Create your views here.
 # user views
 class UserCreateView(generics.CreateAPIView):
-    queryset = models.CustomUser.objects.all()
-    serializer_class = serializers.CustomUserSerializer
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
     
     def perform_create(self, serializer):
         user = serializer.save()
@@ -33,7 +33,7 @@ class UserCreateView(generics.CreateAPIView):
         # Email template
         subject = 'Welcome to GOFoods!'
         context = {
-            'username': user.username,
+            'username': f'{user.first_name} {user.first_name}',
             'otp': otp,
             'message': 'Your OTP code is:',
         }
@@ -53,7 +53,7 @@ class UserVerificationOTPView(APIView):
         email = request.data.get('email')
         otp = request.data.get('otp')
         try:
-            user = models.CustomUser.objects.get(email=email)
+            user = models.User.objects.get(email=email)
             totp = pyotp.TOTP(user.otp_secret, interval=600)
 
             if totp.verify(otp):
@@ -65,14 +65,14 @@ class UserVerificationOTPView(APIView):
                 return Response({'detail': 'User verified successfully.'}, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'Invalid or expired OTP.'}, status=status.HTTP_400_BAD_REQUEST)
-        except models.CustomUser.DoesNotExist:
+        except models.User.DoesNotExist:
             return Response({'detail': 'User not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ResendVerificationOTPView(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
         try:
-            user = models.CustomUser.objects.get(email=email)
+            user = models.User.objects.get(email=email)
 
             if user.is_verified:
                 return Response({'detail': 'User already verified.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -87,7 +87,7 @@ class ResendVerificationOTPView(APIView):
             # Email template context
             subject = 'New OTP Code'
             context = {
-                'username': user.username,
+                'username': f'{user.first_name} {user.last_name}',
                 'otp': otp,
                 'message': 'Here is your new OTP code:',
             }
@@ -99,7 +99,7 @@ class ResendVerificationOTPView(APIView):
             send_mail(subject, plain_message, from_email, [to], html_message=html_message)
 
             return Response({'detail': 'A new OTP has been sent to your email.'}, status=status.HTTP_200_OK)
-        except models.CustomUser.DoesNotExist:
+        except models.User.DoesNotExist:
             return Response({'detail': 'User not found.'}, status=status.HTTP_400_BAD_REQUEST)
         
 class PasswordResetRequestView(generics.GenericAPIView):
@@ -116,7 +116,7 @@ class PasswordResetConfirm(generics.GenericAPIView):
     def get(self, request, uidb64, token):
         try:
             user_id=smart_str(urlsafe_base64_decode(uidb64))
-            user=models.CustomUser.objects.get(id=user_id)
+            user=models.User.objects.get(id=user_id)
 
             if not PasswordResetTokenGenerator().check_token(user, token):
                 return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -144,18 +144,18 @@ class LogoutApiView(generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
  
 class UserListView(generics.ListAPIView):
-    queryset = models.CustomUser.objects.all()
-    serializer_class = serializers.CustomUserSerializer
-    # permission_classes = [IsAuthenticated]
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = serializers.CustomUserSerializer
-    permission_classes = [AllowAny]
+    serializer_class = serializers.UserSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         # return models.CustomUser.objects.filter(user=self.request.user)
         # return models.CustomUser.objects.filter(id=self.request.user.id)
-        return models.CustomUser.objects.all()
+        return models.User.objects.all()
     
 # profile view
 class ProfileListView(generics.ListAPIView):
@@ -215,7 +215,7 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
 class OrderListCreateView(generics.ListCreateAPIView):
     queryset = models.Order.objects.all()
     serializer_class = serializers.OrderSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.OrderSerializer

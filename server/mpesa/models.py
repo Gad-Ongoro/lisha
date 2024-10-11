@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Transaction(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     phone_number = models.CharField(max_length=13)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     checkout_request_id = models.CharField(max_length=100, unique=True)
