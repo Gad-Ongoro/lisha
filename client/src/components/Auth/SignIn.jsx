@@ -7,7 +7,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { FcGoogle } from "react-icons/fc";
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -15,12 +14,10 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { NavLink, useNavigate } from 'react-router-dom';
-import AnimatedXPage from '../Animations/AnimatedXPage';
+import AnimatedXPage from '../AnimatedXPage';
 import { helix } from 'ldrs';
 import { AppContext } from '../../App';
-import { useAppContext } from '../../services/utilities';
 import ReCAPTCHA from "react-google-recaptcha";
-import GoogleSigninButton from './Google/GoogleSignInButton';
 import api from '../../api';
 
 function Copyright(props) {
@@ -40,7 +37,6 @@ const defaultTheme = createTheme();
 
 export default function SignIn() {
   helix.register();
-  const { googleLogin } = useAppContext();
   const { setAuth, loading, setLoading } = React.useContext(AppContext);
   const navigate = useNavigate();
   const [inputs, setInputs] = React.useState({});
@@ -127,9 +123,7 @@ export default function SignIn() {
                 }}
               >
                 <NavLink to={"/"}>
-                  <h2 className='text-green-500 text-3xl font-bold'>
-                    <i>GOFoods</i>
-                  </h2>
+                  <h2 className='text-green-500 text-3xl font-bold'>GOFoods</h2>
                 </NavLink>
                 <h2 className='font-bold text-2xl'>Welcome Back!</h2>
                 <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
@@ -174,26 +168,15 @@ export default function SignIn() {
                   >
                     Sign In
                   </Button>
-
-                  <p className='text-center'>OR</p>
-									{/* <div className='flex justify-center items-center' onClick={() => googleLogin()}>
-										<section className='w-3/4 flex justify-center items-center text-center border rounded-lg'>
-											<FcGoogle size={30}/>
-											<Button>Continue with Google</Button>
-										</section>
-									</div> */}
-
-                  <GoogleSigninButton></GoogleSigninButton>
-
                   { loading && signinLoader }
-                  <Grid container marginTop={2}>
+                  <Grid container>
                     <Grid item xs>
                       <NavLink to="/password/reset" variant="body2">
                         Forgot password?
                       </NavLink>
                     </Grid>
                     <Grid item>
-                      <NavLink to="/account/signup" variant="body2">
+                      <NavLink to="/account/usertype" variant="body2">
                         Don't have an account? <span className='text-blue-500 cursor-pointer hover:text-blue-600 transition duration-300 ease-in'>Sign Up</span>
                       </NavLink>
                     </Grid>

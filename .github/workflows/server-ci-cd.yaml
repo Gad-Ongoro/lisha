@@ -105,4 +105,4 @@ jobs:
       if: success()
       run: |
         cd server
-        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gofoods-server:latest .
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gofoods-server:latest

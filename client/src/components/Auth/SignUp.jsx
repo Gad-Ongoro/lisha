@@ -5,7 +5,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import GoogleSigninButton from './Google/GoogleSignInButton';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -14,7 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate, NavLink } from 'react-router-dom';
-import AnimatedXPage from '../Animations/AnimatedXPage';
+import AnimatedXPage from '../AnimatedXPage';
 import { helix } from 'ldrs';
 import api from '../../api';
 import SnackBar from '../Notifications/SnackBar';
@@ -42,11 +41,12 @@ export default function SignUp() {
 	const [ snackBarSeverity, setSnackBarSeverity ] = React.useState('');
 	const navigate = useNavigate();
 	const [inputs, setInputs] = React.useState({});
+	const accountType = localStorage.getItem('accountType')
 
 	const handleChange = (event) => {
 		const name = event.target.name;
 		const value = event.target.value;
-		setInputs(values => ({...values, [name]: value}))
+		setInputs(values => ({...values, [name]: value, role: accountType}))
 	}
 
   const handleSubmit = (event) => {
@@ -128,11 +128,9 @@ export default function SignUp() {
 								}}
 							>
 								<NavLink to={"/"}>
-									<h2 className='concert-one-regular text-green-500 text-3xl font-bold'>
-										<i>GOFoods</i>
-									</h2>
+									<h2 className='concert-one-regular text-green-500 text-3xl font-bold'>GOFoods</h2>
 								</NavLink>
-								<h2 className='font-bold text-xl'>Get started!</h2>
+								<h2 className='font-bold text-xl'>Get started as a {accountType}!</h2>
 								<Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
 									<Grid container spacing={2}>
 										<Grid item xs={12} sm={6}>
@@ -160,6 +158,18 @@ export default function SignUp() {
 										</Grid>
 										<Grid item xs={12}>
 											<TextField
+												autoComplete="given-name"
+												name="username"
+												required
+												fullWidth
+												id="userName"
+												label="Username"
+												autoFocus
+												onChange={handleChange}
+											/>
+										</Grid>
+										<Grid item xs={12}>
+											<TextField
 												required
 												fullWidth
 												id="email"
@@ -181,6 +191,12 @@ export default function SignUp() {
 												onChange={handleChange}
 											/>
 										</Grid>
+										<Grid item xs={12}>
+											<FormControlLabel
+												control={<Checkbox value="allowExtraEmails" color="primary" />}
+												label="I want to receive inspiration, marketing promotions and updates via email."
+											/>
+										</Grid>
 									</Grid>
 									<Button
 										type="submit"
@@ -190,11 +206,8 @@ export default function SignUp() {
 									>
 										Sign Up
 									</Button>
-									<p className='text-center'>OR</p>
-									<GoogleSigninButton></GoogleSigninButton>
-	
 									{ loading && signUpLoader }
-									<Grid container justifyContent="center" marginTop={2}>
+									<Grid container justifyContent="flex-end">
 										<Grid item>
 											<NavLink to="/account/signin" variant="body2">
 												Already have an account? <span className='text-blue-500 cursor-pointer hover:text-blue-600 transition duration-300 ease-in'>Sign in</span>
