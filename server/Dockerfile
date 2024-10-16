@@ -21,5 +21,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8000
 
-# CMD ["gunicorn", "--chdir", "server", "--bind", "0.0.0.0:8000", "server.wsgi:application"]
-CMD ["sh", "-c", "python manage.py collectstatic --noinput && gunicorn --chdir server --bind 0.0.0.0:8000 server.wsgi:application"]
+# CMD ["gunicorn", "--chdir", "core", "--bind", "0.0.0.0:8000", "core.wsgi:application"]
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && gunicorn --chdir core --bind 0.0.0.0:8000 core.wsgi:application"]
