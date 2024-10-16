@@ -14,6 +14,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include(urls)),
+    path('api/scraper/', include('web_scraper.urls')),
     path('api/mpesa/', include(mpesa_urls)),
     path('api/google/', include('google_oauth2.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
