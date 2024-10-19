@@ -28,7 +28,8 @@ urlpatterns = [
     path('products/<uuid:pk>/', views.ProductDetailView.as_view(), name='Product Detail'),
     
     # cart
-    path('carts/', views.CartListCreateView.as_view(), name='Cart List Create'),
+    path('add-to-cart/', views.CartCreateView.as_view(), name='cart_create'),
+    path('carts/', views.CartListView.as_view(), name='carts_list'),
     path('carts/<uuid:pk>/', views.CartDetailView.as_view(), name='Cart Detail'),
     
     # order

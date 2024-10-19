@@ -196,9 +196,15 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
         return models.Product.objects.filter(user=self.request.user)
     
 # cart
-class CartListCreateView(generics.ListCreateAPIView):
-    # queryset = models.Cart.objects.all()
+class CartCreateView(generics.CreateAPIView):
     serializer_class = serializers.CartSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        return models.Cart.objects.filter(user=self.request.user)
+    
+class CartListView(generics.ListAPIView):
+    serializer_class = serializers.CartListSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     
     def get_queryset(self):
@@ -215,7 +221,7 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
 class OrderListCreateView(generics.ListCreateAPIView):
     queryset = models.Order.objects.all()
     serializer_class = serializers.OrderSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.OrderSerializer
