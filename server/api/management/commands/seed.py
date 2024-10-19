@@ -1,7 +1,7 @@
 import random
 from django.core.management.base import BaseCommand
 from faker import Faker
-from api.models import CustomUser, Product, Order, Review
+from api.models import User, Product, Order, Review
 from uuid import uuid4
 from django.utils import timezone
 from datetime import timedelta
@@ -186,11 +186,11 @@ class Command(BaseCommand):
         self.create_orders(records)
         self.create_reviews(records)
         
-        self.stdout.write('Data seeded successfully.')
+        self.stdout.write('✨✨✨✨ Database seeded successfully.✨✨✨✨')
 
     def reset_db(self):
         self.stdout.write('Resetting the database...')
-        CustomUser.objects.all().delete()
+        User.objects.all().delete()
         Product.objects.all().delete()
         Order.objects.all().delete()
         Review.objects.all().delete()
@@ -199,38 +199,17 @@ class Command(BaseCommand):
     def create_users(self, records):
         for _ in range(records):
             email = self.faker.email()
-            role = random.choice(['buyer', 'seller'])
-            user = CustomUser.objects.create_user(
+            user = User.objects.create_user(
                 id=uuid4(),
                 first_name=self.faker.first_name(),
                 last_name=self.faker.last_name(),
-                username=self.faker.user_name(),
-                role=role,
                 email=email,
                 password=self.faker.password(),
                 is_verified=random.choice([True, False]),
             )
-
-    # def create_products(self, records):
-    #     users = CustomUser.objects.all()
-    #     for _ in range(records):
-    #         user = random.choice(users) if user.role == 'seller' else None
-    #         Product.objects.create(
-    #             id=uuid4(),
-    #             user=user,
-    #             name=self.faker.word(),
-    #             description=self.faker.text(),
-    #             category=self.faker.word(),
-    #             price=random.uniform(10.0, 100.0),
-    #             quantity_available=random.randint(1, 50),
-    #             unit_of_measurement='kg',
-    #             perishable=bool(random.getrandbits(1)),
-    #             expiration_date=timezone.now() + timedelta(days=random.randint(1, 100)),
-    #             image=f'product_images/{self.faker.word()}.jpg',
-    #         )
             
     def create_products(self, records):
-        sellers = CustomUser.objects.filter(role='seller')
+        sellers = User.objects.all()
     
         if not sellers.exists():
             self.stdout.write('No sellers found, skipping product creation.')
@@ -267,7 +246,7 @@ class Command(BaseCommand):
 
 
     def create_orders(self, records):
-        users = CustomUser.objects.all()
+        users = User.objects.all()
         products = Product.objects.all()
         for _ in range(records):
             user = random.choice(users)
@@ -282,7 +261,7 @@ class Command(BaseCommand):
             )
 
     def create_reviews(self, records):
-        users = CustomUser.objects.all()
+        users = User.objects.all()
         products = Product.objects.all()
         for _ in range(records):
             reviewer = random.choice(users)
