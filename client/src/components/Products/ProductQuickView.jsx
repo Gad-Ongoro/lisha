@@ -4,12 +4,17 @@ import { useState, useContext } from 'react';
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { enqueueSnackbar } from 'notistack';
+import { helix } from 'ldrs'
 import { AppContext } from '../../App';
+import { useAppContext } from '../../services/utilities';
 import api from '../../api';
 
 export default function ProductQuickView({ product }) {
-  const { productQuickViewOpen, setProductQuickViewOpen, user, currency, currencyExchangeRates } = useContext(AppContext);
+  helix.register();
+  const { user, setCartOpen, loading, setLoading, mergedCartItems, setCartItemsCount, currency, currencyExchangeRates } = useAppContext();
+  const { productQuickViewOpen, setProductQuickViewOpen } = useContext(AppContext);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [ addToCartLoading, setAddToCartLoading ] = useState(false);
 
   const {
     id,
@@ -26,19 +31,38 @@ export default function ProductQuickView({ product }) {
 
   const handleAddToCart = async () => {
     try {
+      setAddToCartLoading(true);
       const total_price = (parseFloat(price) * selectedQuantity).toFixed(2);
-      await api.post('carts/', {
+      const response = await api.post('add-to-cart/', {
         user: user.id,
         product: id,
         quantity: selectedQuantity,
         total_price,
       });
-      enqueueSnackbar(`Product added to cart successfully!`, { variant: 'success' });
+
+      if (response.status === 201) {
+        setCartOpen(true);
+        setCartItemsCount(mergedCartItems.length + 1);
+        enqueueSnackbar(`${name} added to cart successfully!`, { variant: 'success' });
+      }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      enqueueSnackbar(`Failed to add product to cart: ${error.response.data.detail} `, { variant: 'warning' });
+      enqueueSnackbar(`Failed to add product to cart: ${error?.response?.data?.detail} `, { variant: 'warning' });
+    } finally {
+      setAddToCartLoading(false);
     }
   };
+
+  const cartLoader = (
+    <div className='flex items-center justify-center rotate-90'>
+			<l-helix
+				size="50"
+				speed="2.5" 
+				color="green" 
+        className=""
+			></l-helix>
+		</div>
+  );
 
   return (
     <Dialog open={productQuickViewOpen} onClose={() => setProductQuickViewOpen(false)} className="relative z-50">
@@ -87,7 +111,7 @@ export default function ProductQuickView({ product }) {
                     <p className="mt-2 text-sm text-gray-700"><strong>Category:</strong> {category}</p>
                     <p className="mt-2 text-sm text-gray-700"><strong>Quantity Available:</strong> {quantity_available} {unit_of_measurement}s</p>
                     <p className="mt-2 text-sm text-gray-700"><strong>Perishable:</strong> {perishable ? 'Yes' : 'No'}</p>
-                    {perishable && <p className="mt-2 text-sm text-gray-700"><strong>Expiration Date:</strong> {expiration_date}</p>}
+                    {/* {perishable && <p className="mt-2 text-sm text-gray-700"><strong>Expiration Date:</strong> {expiration_date}</p>} */}
                   </section>
 
                   <section aria-labelledby="options-heading" className="mt-10">
@@ -119,6 +143,7 @@ export default function ProductQuickView({ product }) {
                         Add to Cart
                       </button>
                     </form>
+                    { addToCartLoading && cartLoader}
                   </section>
                 </div>
               </div>

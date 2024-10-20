@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import AnimatedXPage from '../AnimatedXPage';
+import AnimatedXPage from '../Animations/AnimatedXPage';
 import api from '../../api';
+import { enqueueSnackbar } from 'notistack';
+import HelixUIBall from '../Loaders/HelixUIBall';
 import { jwtDecode } from 'jwt-decode';
 import { AppContext } from '../../App';
 
@@ -28,6 +30,7 @@ const unitsOfMeasurement = {
 
 const ProductCreate = () => {
   const { user_id, navigate } = useContext(AppContext);
+  const [ loading, setLoading ] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -83,6 +86,7 @@ const ProductCreate = () => {
     }
 
     try {
+      setLoading(true);
       const response = await api.post('products/create/', uploadData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -90,10 +94,14 @@ const ProductCreate = () => {
       });
       if (response.status === 201) {
         navigate(`/account/${user_id}/ads`);
+        enqueueSnackbar('Product created successfully', { variant: 'success' });
       }
     } catch (error) {
+      setLoading(false);
       console.error('Error creating product:', error);
-    }
+    } finally {
+      setLoading(false);
+    };
   };
 
   return (
@@ -208,10 +216,13 @@ const ProductCreate = () => {
           <div>
             <button
               type="submit"
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              className={`${loading && 'cursor-not-allowed'} ${loading && 'disabled'} inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
             >
               Make a post
             </button>
+            {
+              loading && (<HelixUIBall></HelixUIBall>)
+            }
           </div>
         </form>
       </div>

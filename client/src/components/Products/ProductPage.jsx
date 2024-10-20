@@ -1,42 +1,52 @@
 'use client';
 
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import NavBar from '../Header/NavBar';
 import HomeDrawer from '../Home/HomeDrawer';
 import { enqueueSnackbar } from 'notistack';
-import CircularSpinner from '../Notifications/CircularSpinner';
-import { AppContext } from '../../App';
+import { useAppContext } from '../../services/utilities';
+import AnimatedXPage from '../Animations/AnimatedXPage';
+import HelixUIBall from '../Loaders/HelixUIBall';
 import api from '../../api';
 
 export default function ProductPage() {
 	const params = useParams();
-	const { user, products, currency, currencyExchangeRates } = useContext(AppContext);
+	const { loading, setLoading, setCartOpen, mergedCartItems, setCartItemCount, user, products, currency, currencyExchangeRates } = useAppContext();
 	const product = products.filter((product) => product.id === params.product_id)[0];
   const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   const handleAddToCart = async () => {
     try {
+      setLoading(true);
       const total_price = (parseFloat(product.price) * selectedQuantity).toFixed(2);
-      await api.post('carts/', {
+      const response = await api.post('add-to-cart/', {
         user: user.id,
         product: product.id,
         quantity: selectedQuantity,
         total_price,
       });
-      enqueueSnackbar(`Product added to cart successfully!`, { variant: 'success' });
+
+      if (response.status === 201) {
+        setCartOpen(true);
+        setCartItemCount(mergedCartItems.length + 1);
+        enqueueSnackbar(`${product.name} added to cart successfully!`, { variant: 'success' });
+      }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      enqueueSnackbar(`Failed to add product to cart: ${error.response.data.detail} `, { variant: 'warning' });
+      enqueueSnackbar(`Failed to add product to cart: ${error?.response?.data?.detail} `, { variant: 'warning' });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
       <NavBar />
+      <AnimatedXPage> 
       <HomeDrawer />
       <div className="bg-white">
-        { product === undefined || null ? (<CircularSpinner></CircularSpinner>) :
+        { loading || (product === undefined || null) ? (<HelixUIBall />) :
         (
         <>
           <div className="">
@@ -58,21 +68,21 @@ export default function ProductPage() {
             {/* Product info */}
             <div className="mx-auto px-2">
 
-              <div className="">
+              <div className="w-10/12">
                 <h2 className="sr-only">Product information</h2>
                 <p className="mt-2 text-xl text-gray-700"><strong>Category: </strong>{product.category}</p>
                 <p className="mt-2 text-xl text-gray-700"><strong>Description: </strong>{product.description}</p>
                 <p className="mt-2 text-xl text-gray-700">
                   {
-                    currency === 'KES' && <span><strong>Price: </strong>{currency} {(product.price * currencyExchangeRates.KES).toFixed(2)}</span>
+                    currency === 'KES' && <span><strong>Price: </strong>{currency} <strong>{(product.price * currencyExchangeRates.KES).toFixed(2)}</strong></span>
                   }
                   {
-                    currency === 'USD' && <span><strong>Price: </strong>{currency} {(product.price * currencyExchangeRates.USD).toFixed(2)}</span>
+                    currency === 'USD' && <span><strong>Price: </strong>{currency} <strong>{(product.price * currencyExchangeRates.USD).toFixed(2)}</strong></span>
                   }
                   
                 </p>
                 <p className="mt-2 text-xl text-gray-700"><strong>Quantity Available:</strong> {product.quantity_available} {product.unit_of_measurement}s</p>
-                <p className="mt-2 text-xl text-gray-700"><strong>Perishable:</strong> {product.perishable ? 'Yes' : 'No'}</p>
+                {/* <p className="mt-2 text-xl text-gray-700"><strong>Perishable:</strong> {product.perishable ? 'Yes' : 'No'}</p> */}
                 {/* {product.perishable && <p className="mt-2 text-xl text-gray-700"><strong>Expiration Date:</strong> {product.expiration_date}</p>} */}
 
                 <form>
@@ -105,6 +115,7 @@ export default function ProductPage() {
           </div>
         </>)}
       </div>
+      </AnimatedXPage>
     </>
   )
 };

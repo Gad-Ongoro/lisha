@@ -1,19 +1,23 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { enqueueSnackbar } from 'notistack';
-import AnimatedYPage from '../AnimatedYPage';
+import AnimatedYPage from '../Animations/AnimatedYPage';
+import Footer from '../Footer';
 import SideNav from './SideNav';
 import DashBar from './DashBar';
 import DashView from './DashView';
 import DashDrawer from './DashDrawer';
+import ProductCreate from '../Products/ProductCreate';
+import MpesaPayment from './MpesaPayment';
+import Ads from './Ads';
 import Settings from './Settings';
 import ProtectedRoute from '../Auth/ProtectedRoute';
-import { AppContext } from '../../App';
+import { useAppContext } from '../../services/utilities';
 import api from '../../api';
 export const DashContext = createContext();
 
 function DashHome() {
-	const { auth, setAuth, refreshToken, navigate } = useContext(AppContext);
+	const { setAuth, refreshToken, navigate } = useAppContext();
 	const [dashDrawerOpen, setDashDrawerOpen] = useState(false);
 	const [isScrolled, setIsScrolled] = useState(false);
 
@@ -59,7 +63,7 @@ function DashHome() {
 				<AnimatedYPage>
 					<DashContext.Provider value={{ dashDrawerOpen, setDashDrawerOpen, handleLogout }}>
 						<DashDrawer></DashDrawer>
-						<div className='container h-screen grid grid-cols-12'>
+						<div className='grid grid-cols-12'>
 							<div className={`sticky top-0 z-20 ${isScrolled ? 'bg-emerald-100' : 'bg-white'} 
 								transition-all duration-300
 								col-start-1 col-end-13 sm:col-start-2 sm:col-end-13 sm:p-3 rounded-lg`}
@@ -72,11 +76,16 @@ function DashHome() {
 							>
 								<SideNav></SideNav>
 							</div>
+
 							<div className='row-start-2 row-end-13 col-start-1 md:col-start-2 col-end-13'>
 								<Routes>
 									<Route path='/dashview' element={<DashView></DashView>}></Route>
 									<Route path='/settings' element={<Settings></Settings>}></Route>
+									<Route path='/adpost' element={<ProductCreate></ProductCreate>}></Route>
+									<Route path='/ads' element={<Ads></Ads>}></Route>
+									<Route path='/lipa-na-mpesa' element={<MpesaPayment></MpesaPayment>}></Route>
 								</Routes>
+								<Footer></Footer>
 							</div>
 						</div>
 					</DashContext.Provider>

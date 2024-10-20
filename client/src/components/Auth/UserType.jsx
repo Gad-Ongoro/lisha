@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import NavBar from '../Header/NavBar';
-import AnimatedYPage from '../AnimatedYPage';
-import AnimatedXPage from '../AnimatedXPage';
+import AnimatedYPage from '../Animations/AnimatedYPage';
+import AnimatedXPage from '../Animations/AnimatedXPage';
 import { FaUser } from "react-icons/fa";
 
 function UserType() {

@@ -3,8 +3,8 @@ import { jwtDecode } from "jwt-decode";
 import api from "../../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../../constants";
 import { useState, useEffect } from "react";
-import CircularProgress from '@mui/material/CircularProgress';
-
+import NavBar from "../Header/NavBar";
+import HelixUIBall from "../Loaders/HelixUIBall";
 
 function ProtectedRoute({ children }) {
     const [isAuthorized, setIsAuthorized] = useState(null);
@@ -50,11 +50,13 @@ function ProtectedRoute({ children }) {
 
     if (isAuthorized === null) {
         return (
-            <div className='flex gap-x-6 justify-center items-center h-screen'>
-                <CircularProgress />
-                <CircularProgress />
-                <CircularProgress />
-            </div>
+            <>
+                <NavBar />
+                <div className='flex gap-x-6 justify-center items-center h-screen'>
+                    <HelixUIBall />
+                </div>
+            </>
+           
         );
     }
 

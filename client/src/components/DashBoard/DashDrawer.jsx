@@ -1,19 +1,21 @@
 import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { TbSmartHome } from "react-icons/tb";
+import CartIcon from '../Cart/CartIcon';
 import { CgProfile } from "react-icons/cg";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
+import { MdPostAdd } from "react-icons/md";
 import { RiSettings3Line } from "react-icons/ri";
 import { TbLogout2 } from "react-icons/tb";
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { DashContext } from './DashHome';
-import { AppContext } from '../../App';
+import { useAppContext } from '../../services/utilities';
 
 export default function DashDrawer() {
-  const { user_id, scrollToTop } = useContext(AppContext);
+  const { user, user_id, setCartOpen, scrollToTop } = useAppContext();
 	const { dashDrawerOpen, setDashDrawerOpen, handleLogout } = useContext(DashContext);
 
 	const handleNavClick = () => {
@@ -50,27 +52,39 @@ export default function DashDrawer() {
               </TransitionChild>
               <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
                 <div className="px-4 sm:px-6">
-                  <DialogTitle className="text-base font-semibold leading-6 text-gray-900">Gad Ongoro</DialogTitle>
+                  <DialogTitle className="font-bold text-2xl text-center leading-6 text-green-600">GOFoods</DialogTitle>
                 </div>
                 <div className="relative mt-6 flex-1 px-4 sm:px-6">
 									<div className='grid'>
-										<NavLink to={'/'} className={'flex items-center gap-2'} onClick={handleNavClick}>
+										<NavLink to={'/'} className={'flex items-center gap-2 my-2'} onClick={handleNavClick}>
 											<TbSmartHome className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30}/>
 											<span>Home</span>
 										</NavLink>
-										<NavLink to={`/account/${user_id}/dashview`} className={'flex items-center gap-2'} onClick={handleNavClick}>
+
+                    <div className=''>
+                      <CartIcon></CartIcon>
+                      <span className='cursor-pointer ml-4' onClick={() => setCartOpen(true)}>Cart</span>
+                    </div>
+
+										<NavLink to={`/account/${user_id}/dashview`} className={'flex items-center gap-2 my-2'} onClick={handleNavClick}>
 											<CgProfile className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30} />
 											<span>Profile</span>
 										</NavLink>
-										<NavLink to={`/account/${user_id}/notifications`} className={'flex items-center gap-2'} onClick={handleNavClick}>
+										<NavLink to={`/account/${user_id}/notifications`} className={'flex items-center gap-2 my-2'} onClick={handleNavClick}>
 											<IoNotificationsOutline className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30} />
 											<span>Notifications</span>
 										</NavLink>
-										<NavLink to={`/account/${user_id}/favorites`} className={'flex items-center gap-2'} onClick={handleNavClick}>
+
+                    <NavLink to={`/account/${user_id}/adpost`} className={'flex items-center gap-2 my-2'} onClick={handleNavClick}>
+                      <MdPostAdd className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30} />
+                      <span>New Ad</span>
+                    </NavLink>
+
+										<NavLink to={`/account/${user_id}/favorites`} className={'flex items-center gap-2 my-2'} onClick={handleNavClick}>
 											<MdOutlineFavoriteBorder className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30} />
 											<span>Favorites</span>
 										</NavLink>
-										<NavLink to={`/account/${user_id}/settings`} className={'flex items-center gap-2'} onClick={handleNavClick}>
+										<NavLink to={`/account/${user_id}/settings`} className={'flex items-center gap-2 my-2'} onClick={handleNavClick}>
 											<RiSettings3Line className='transition-all duration-400 cursor-pointer hover:text-green-500' size={30} />
 											<span>Settings</span>
 										</NavLink>
@@ -78,7 +92,7 @@ export default function DashDrawer() {
 										<SnackbarProvider anchorOrigin={{ vertical: 'top', horizontal: 'left' }} />
 										
 										<div 
-                      className='flex items-center gap-2'
+                      className='flex items-center gap-2 my-2'
                       onClick={handleLogout}
                     >
 											<TbLogout2 

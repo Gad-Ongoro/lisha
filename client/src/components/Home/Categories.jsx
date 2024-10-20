@@ -6,7 +6,7 @@ import { px } from 'framer-motion';
 
 const Categories = () => {
   return (
-    <section className="relative bg-emerald-500 py-10">
+    <section className="relative  py-10">
       <TopWaves />
       <BottomWaves />
       <div className="container mx-auto px-6 text-center">

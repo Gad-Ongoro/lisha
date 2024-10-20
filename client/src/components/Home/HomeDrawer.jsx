@@ -8,10 +8,12 @@ import { Button, Disclosure, DisclosureButton, DisclosurePanel, } from '@headles
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid';
 import { TbLogout2 } from "react-icons/tb";
 import { AppContext } from '../../App';
+import { useAppContext } from '../../services/utilities';
 import api from '../../api';
 import { FaRegUser } from "react-icons/fa";
 import { enqueueSnackbar } from 'notistack';
 
+import { IoIosListBox } from "react-icons/io";
 import { LuVegan } from "react-icons/lu";
 import { GiFruitBowl } from "react-icons/gi";
 import { TbEggs } from "react-icons/tb";
@@ -20,20 +22,23 @@ import { TbMeat } from "react-icons/tb";
 import { GiGrainBundle } from "react-icons/gi";
 import { GiHoneyJar } from "react-icons/gi";
 import { LuMilk } from "react-icons/lu";
+import { FcShop } from "react-icons/fc";
 
 const products = [
+  { name: 'all', description: 'All products.', href: '/products', icon: IoIosListBox },
   { name: 'Vegetables', description: 'Fresh, nutritious vegetables for healthy meals.', href: '/products/vegetables', icon: LuVegan },
   { name: 'Fruits', description: 'Juicy, ripe fruits picked fresh for and tasty treats.', href: '/products/fruits', icon: GiFruitBowl },
-  { name: 'Eggs', description: 'Rich in flavor and essential nutrients.', href: '/products/eggs', icon: TbEggs },
+  { name: 'Eggs & Dairy Products', description: 'Rich in flavor and essential nutrients.', href: '/products/eggs', icon: TbEggs },
   { name: 'Fish & Seafood', description: 'Sustainably sourced for delicious, healthy meals.', href: '/products/fish&seafood', icon: GiDoubleFish },
   { name: 'Meat & Poultry', description: 'Farm-raised for flavor and quality.', href: '/products/meat&poultry', icon: TbMeat },
   { name: 'Grains & Cereals', description: 'Nutritious grains and cereals for meals', href: '/products/grains&cereals', icon: GiGrainBundle },
   { name: 'Bee Products', description: 'Natural bee products, pure and beneficial for wellness.', href: '/products/beeproducts', icon: GiHoneyJar },
-  { name: 'Dairy Products', description: 'Rich in protein and essential nutrients.', href: '/products/dairyproducts', icon: LuMilk },
+  { name: 'Yoghurts', description: 'Rich in protein and essential nutrients.', href: '/products/yoghurts', icon: LuMilk },
 ]
+
 const callsToAction = [
-  { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
-  { name: 'Contact sales', href: '#', icon: PhoneIcon },
+  { name: 'Marketplace', href: '/marketplace', icon: FcShop },
+  { name: 'Contact us', href: '/contact', icon: PhoneIcon },
 ]
 
 const currencies = [
@@ -42,7 +47,8 @@ const currencies = [
 ]
 
 export default function HomeDrawer() {
-  const { auth, user_id, setAuth, setSnackBarOpen, mobileMenuOpen, setMobileMenuOpen, currency, setCurrency, setSearchModalOpen } = useContext(AppContext);
+  const { getScrapedData, auth, setAuth, user_id } = useAppContext();
+  const { setSnackBarOpen, mobileMenuOpen, setMobileMenuOpen, currency, setCurrency, setSearchModalOpen } = useContext(AppContext);
   const [snackBarMsg, setSnackBarMsg] = useState('');
   const [ snackBarSeverity, setSnackBarSeverity ] = useState('');
   const refreshToken = localStorage.getItem('refresh');
@@ -112,7 +118,7 @@ export default function HomeDrawer() {
                     <div className="flex items-center justify-between">
                       <NavLink to="/" className="-m-1.5 p-1.5">
                         <span className="sr-only">GOFoods</span>
-                        <p className='text-xl font-bold'>GOFoods</p>
+                        <p className='pacifico-regular text-green-700 text-3xl md:text-3xl font-bold'><i>GOFoods</i></p>
                       </NavLink>
                     </div>
                     <div className="mt-6 flow-root">
@@ -124,11 +130,14 @@ export default function HomeDrawer() {
                               <ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none group-data-[open]:rotate-180" />
                             </DisclosureButton>
                             <DisclosurePanel className="mt-2 space-y-2">
-                              {[...products, ...callsToAction].map((item) => (
+                              {[...products].map((item) => (
                                 <NavLink
                                   key={item.name}
                                   to={`/products/${item.name}`}
-                                  onClick={() => setMobileMenuOpen(false)}
+                                  onClick={() => {
+                                    setMobileMenuOpen(false);
+                                    getScrapedData(item.name);
+                                  }}
                                   className="group relative flex items-center gap-x-4 rounded-lg p-1 text-sm hover:bg-gray-50"
                                 >
                                   <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
@@ -155,7 +164,7 @@ export default function HomeDrawer() {
 
                           <Popover className="relative">
                             <PopoverButton className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 outline-none">
-                              <span className='font-bold'>Currency</span> <span className='text-green-700'>{currency}</span>
+                              <span className='font-bold'><strong>Currency</strong></span> <span className='text-green-700'>{currency}</span>
                               <ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none text-gray-400" />
                             </PopoverButton>
 
@@ -183,30 +192,26 @@ export default function HomeDrawer() {
                             </PopoverPanel>
                           </Popover>
 
-                          <a
-                            href="#"
-                            className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                          >
-                            Features
-                          </a>
-                          <a
-                            href="#"
+                          <NavLink
+                            to="/marketplace"
+                            onClick={() => setMobileMenuOpen(false)}
                             className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                           >
                             Marketplace
-                          </a>
-                          <a
-                            href="#"
+                          </NavLink>
+                          <NavLink
+                            to="/contact"
                             className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                           >
-                            Company
-                          </a>
+                            Contact
+                          </NavLink>
                         </div>
                         {
                           !auth && (
                             <div className="py-6">
                               <NavLink
                                 to="/account/signin"
+                                onClick={() => setMobileMenuOpen(false)}
                                 className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                               >
                                 Login

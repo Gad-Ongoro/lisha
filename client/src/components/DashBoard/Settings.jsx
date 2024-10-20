@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
-import AnimatedXPage from '../AnimatedXPage';
-import { AppContext } from '../../App';
+import React from 'react';
+import AnimatedXPage from '../Animations/AnimatedXPage';
+import { useAppContext } from '../../services/utilities';
 
 function Settings() {
-	const { user } = useContext(AppContext);
+	const { user } = useAppContext();
 
 	return (
 		<AnimatedXPage>
@@ -63,8 +63,13 @@ function Settings() {
 					</div>
 
 					<div className="form-floating mt-3 mb-3 ml-2 w-10/12 md:w-1/2 text-dark">
-						<input type="text" className="form-control" id="floatingInput" placeholder="UserName" name="username"></input>
-						<label htmlFor="floatingInput">Username: {user.username}</label>
+						<input type="text" className="form-control" id="floatingInput" placeholder="First Name" name="first_name"></input>
+						<label htmlFor="floatingInput">First Name: {user.first_name}</label>
+					</div>
+
+					<div className="form-floating mt-3 mb-3 ml-2 w-10/12 md:w-1/2 text-dark">
+						<input type="text" className="form-control" id="floatingInput" placeholder="Last Name" name="last_name"></input>
+						<label htmlFor="floatingInput">Last Name: {user.last_name}</label>
 					</div>
 
 					<div class="form-floating mt-3 mb-3 ml-2 w-10/12 md:w-1/2 text-dark">

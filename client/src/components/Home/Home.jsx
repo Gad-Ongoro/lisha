@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { IoLogOutOutline } from "react-icons/io5";
 import HomeDrawer from './HomeDrawer';
-import AnimatedYPage from '../AnimatedYPage';
+import AnimatedYPage from '../Animations/AnimatedYPage';
 import InViewAnimation from '../Animations/InViewAnimation';
 import NavBar from '../Header/NavBar';
 import Hero from './Hero';
@@ -20,7 +19,6 @@ const Home = () => {
       <HomeDrawer mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
       <AnimatedYPage>
         <Hero />
-        <InViewAnimation><Features /></InViewAnimation>
         <InViewAnimation><Categories /></InViewAnimation>
         <InViewAnimation><ShipmentInfo /></InViewAnimation>
         <InViewAnimation><Testimonials /></InViewAnimation>

@@ -40,8 +40,8 @@ const defaultTheme = createTheme();
 
 export default function SignIn() {
   helix.register();
-  const { googleLogin } = useAppContext();
-  const { setAuth, loading, setLoading } = React.useContext(AppContext);
+  const { googleLogin, setAuth } = useAppContext();
+  const { loading, setLoading } = React.useContext(AppContext);
   const navigate = useNavigate();
   const [inputs, setInputs] = React.useState({});
   const [recaptchaValue, setRecaptchaValue] = React.useState(null);

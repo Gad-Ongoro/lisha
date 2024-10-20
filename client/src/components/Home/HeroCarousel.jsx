@@ -6,17 +6,17 @@ const responsive = {
   desktop: {
     breakpoint: { max: 3000, min: 1024 },
     items: 1,
-    slidesToSlide: 1 // optional, default to 1.
+    slidesToSlide: 1
   },
   tablet: {
     breakpoint: { max: 1024, min: 464 },
     items: 1,
-    slidesToSlide: 1 // optional, default to 1.
+    slidesToSlide: 1
   },
   mobile: {
     breakpoint: { max: 464, min: 0 },
     items: 1,
-    slidesToSlide: 1 // optional, default to 1.
+    slidesToSlide: 1
   }
 };
 
@@ -47,9 +47,9 @@ function HeroCarousel() {
 			<div className='grid justify-center items-center'>
 				<img src="images/w2.png" alt="Lisha" className='h-60' />
 			</div>
-			<div className='grid justify-center items-center'>
+			{/* <div className='grid justify-center items-center'>
 				<img src="images/w3.png" alt="Lisha" className='h-60' />
-			</div>
+			</div> */}
 			<div className='grid justify-center items-center'>
 				<img src="images/w4.png" alt="Lisha" className='h-60' />
 			</div>

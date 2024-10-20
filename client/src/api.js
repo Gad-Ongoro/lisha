@@ -3,6 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
 
 const baseURL = process.env.REACT_APP_API_URL;
+// const baseURL = `http://127.0.0.1:8000/api/`;
 
 let accessToken = localStorage.getItem('access') || '';
 let refreshToken = localStorage.getItem('refresh') || '';
@@ -41,6 +42,21 @@ api.interceptors.request.use(
                 req.headers.Authorization = `Bearer ${accessToken}`;
             } catch (error) {
                 console.error('Token refresh failed:', error);
+                try {
+                    axios.post(`${baseURL}logout/`, {
+                        refresh: refreshToken,
+                    }).then(
+                        (res) => {
+                            console.log(res);
+                        },
+                        (err) => {
+                            console.log(err);
+                        }
+                    );
+                    
+                } catch (error) {
+                    console.error('Logout failed:', error);
+                }
                 localStorage.removeItem('access');
                 localStorage.removeItem('refresh');
                 localStorage.clear();

@@ -6,10 +6,12 @@ import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import { IoSearch } from "react-icons/io5";
 import { enqueueSnackbar } from 'notistack';
 import { AppContext } from '../../App';
+import { useAppContext } from '../../services/utilities';
 import api from '../../api';
 
 export default function SearchModal() {
-  const { searchModalOpen, setSearchModalOpen, user } = useContext(AppContext);
+  const { searchModalOpen, setSearchModalOpen } = useContext(AppContext);
+  const { getScrapedData } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
@@ -19,8 +21,9 @@ export default function SearchModal() {
     setSearchTerm(term);
     if (term.length > 1) {
       try {
-        const response = await api.get(`products/?search=${term}`);
-        setSearchResults(response.data);
+        const dbResponse = await api.get(`products/?search=${term}`);
+        const scrapeResponse = await api.get(`scraper/scrape/?search=${term}`);
+        setSearchResults(dbResponse.data);
       } catch (error) {
         console.error('Search Error:', error);
       }

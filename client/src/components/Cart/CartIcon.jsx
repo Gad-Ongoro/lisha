@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { AppContext } from '../../App';
+import { useAppContext } from '../../services/utilities';
 import api from '../../api';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -12,29 +13,29 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     top: 13,
     border: `2px solid ${theme.palette.background.paper}`,
     padding: '0 4px',
+    backgroundColor: 'green',
   },
 }));
 
 export default function CartIcon() {
-  const { setCartOpen, user } = React.useContext(AppContext);
-  const [cartItemCount, setCartItemCount] = React.useState(0);
+  const { user, setCartOpen, cartItemsCount, setCartItemsCount } = useAppContext();
 
   React.useEffect(() => {
-    const fetchCartItemCount = async () => {
+    const fetchCartItemsCount = async () => {
       try {
-        const response = await api.get('carts/', { params: { user: user.id } });
-        setCartItemCount(response.data.length);
+        const response = await api.get('carts/');
+        setCartItemsCount(response.data.length);
       } catch (error) {
         console.error('Error fetching cart item count:', error);
       }
     };
 
-    fetchCartItemCount();
+    fetchCartItemsCount();
   }, [user.id]);
 
   return (
     <IconButton onClick={() => setCartOpen(true)} aria-label="cart">
-      <StyledBadge badgeContent={cartItemCount} color="secondary">
+      <StyledBadge badgeContent={cartItemsCount} color="secondary">
         <ShoppingCartIcon />
       </StyledBadge>
     </IconButton>

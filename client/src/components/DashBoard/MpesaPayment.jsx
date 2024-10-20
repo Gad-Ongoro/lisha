@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import NavBar from '../Header/NavBar';
-import AnimatedXPage from '../AnimatedXPage';
+import AnimatedXPage from '../Animations/AnimatedXPage';
+import { enqueueSnackbar } from 'notistack';
+import { useAppContext } from '../../services/utilities';
 import api from '../../api';
+// import { Ls } from 'dayjs';
 
-const MpesaPaymentPage = () => {
+const MpesaPayment= () => {
+  const { cartSubTotal } = useAppContext();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [formattedPhoneNumber, setFormattedPhoneNumber] = useState('');
   const [amount, setAmount] = useState('');
@@ -32,12 +35,12 @@ const MpesaPaymentPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (formattedPhoneNumber.length === 12 && amount) {
+    if (formattedPhoneNumber.length === 12 && cartSubTotal) {
       try {
         setLoading(true);
-        const response = await api.post('mpesa/lipa-na-mpesa/', { phonenumber: formattedPhoneNumber, amount });
-        console.log('Response:', response.data);
-        alert('Payment initiated successfully');
+        const response = await api.post('mpesa/lipa-na-mpesa/', { phone_number: formattedPhoneNumber, amount: 1 });
+        console.log('Response:', response.data.Response);
+        enqueueSnackbar(`${response.data.Response.CustomerMessage}`, { variant: 'success' });
       } catch (err) {
         console.error('Error:', err);
         setError('Failed to initiate payment. Please try again.');
@@ -51,9 +54,8 @@ const MpesaPaymentPage = () => {
 
   return (
 		<>
-		<NavBar />
 		<AnimatedXPage>
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">M-Pesa Payment</h2>
         <form onSubmit={handleSubmit}>
@@ -74,7 +76,7 @@ const MpesaPaymentPage = () => {
               />
             </div>
           </div>
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2" htmlFor="amount">
               Amount
             </label>
@@ -87,7 +89,7 @@ const MpesaPaymentPage = () => {
               placeholder="Enter the amount"
               required
             />
-          </div>
+          </div> */}
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           <button
             type="submit"
@@ -96,7 +98,7 @@ const MpesaPaymentPage = () => {
             }`}
             disabled={loading}
           >
-            {loading ? 'Processing...' : 'Pay with M-Pesa'}
+            {loading ? 'Processing...' : `Pay KES. ${cartSubTotal} with M-Pesa`}
           </button>
         </form>
       </div>
@@ -106,4 +108,4 @@ const MpesaPaymentPage = () => {
   );
 };
 
-export default MpesaPaymentPage;
+export default MpesaPayment;

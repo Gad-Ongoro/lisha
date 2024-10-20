@@ -12,7 +12,7 @@ const Footer = () => {
       <TopWaves />
       <footer className="bg-gray-900 text-white py-6">
         <div className='text-center'>
-          <NavLink to={'/'} className='text-2xl text-center font-bold cursor-pointer text-green-500'>GOFoods</NavLink>
+          <NavLink to={'/'} className='pacifico-regular text-2xl text-center font-bold cursor-pointer text-green-400'><i>GOFoods</i></NavLink>
         </div>
         <div className='grid md:flex grid-cols-2 justify-around'>
           <div>
@@ -22,7 +22,7 @@ const Footer = () => {
             </div>
             <div className='flex items-center m-1 p-1'>
               <BiSupport className='text-xl m-1' />
-              <p>+254712345678</p>
+              <p>+254798436255</p>
             </div>
             <div className='flex items-center m-1 p-1'>
               <FiMail className='text-xl m-1' />
