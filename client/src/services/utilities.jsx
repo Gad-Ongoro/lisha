@@ -60,6 +60,32 @@ export default function GOFoodsAppContext({ children }) {
 		}
 	};
 
+	// User Registration
+	const userRegister = async (data) => {
+		try {
+			setLoading(true);
+			const response = await api.post("users/register/", data);
+			// console.log(response);
+			if (response.status === 201) {
+				localStorage.setItem('email', data.email);
+				enqueueSnackbar(`Successfully registered`, { variant: 'success' });
+				navigate('/account/otpverification');
+			} else {
+				throw new Error("Error registering user");
+			}
+		} catch (error) {
+			console.error(error);
+			if (error.response.data.email) {
+				enqueueSnackbar(`${error.response.data.email}`, { variant: 'error' });
+			} else {
+				enqueueSnackbar(`${error.response.data.detail}`, { variant: 'error' });
+			}
+			return error;
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	// GET user
   async function fetchUser() {
 		try {
@@ -151,7 +177,6 @@ export default function GOFoodsAppContext({ children }) {
 			const response = await api.get("carts/");
 			if (response.status === 200) {
 				let items = response.data;
-				console.log(items);
 				setCartItemsCount(items.length);
 
 				// Sort items by datetime in descending order
@@ -201,7 +226,7 @@ export default function GOFoodsAppContext({ children }) {
 	const contextValues = {
 		navigate, refreshToken, scrollToTop,
 		loading, setLoading,
-		googleLogin,
+		googleLogin, userRegister,
 		products,
 		getProducts, getScrapedData,
 		cartItems, setCartItems,

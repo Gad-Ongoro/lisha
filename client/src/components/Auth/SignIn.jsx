@@ -17,7 +17,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { NavLink, useNavigate } from 'react-router-dom';
 import AnimatedXPage from '../Animations/AnimatedXPage';
 import { helix } from 'ldrs';
-import { AppContext } from '../../App';
 import { useAppContext } from '../../services/utilities';
 import ReCAPTCHA from "react-google-recaptcha";
 import GoogleSigninButton from './Google/GoogleSignInButton';
@@ -40,8 +39,7 @@ const defaultTheme = createTheme();
 
 export default function SignIn() {
   helix.register();
-  const { googleLogin, setAuth } = useAppContext();
-  const { loading, setLoading } = React.useContext(AppContext);
+  const { googleLogin, setAuth, loading, setLoading } = useAppContext();
   const navigate = useNavigate();
   const [inputs, setInputs] = React.useState({});
   const [recaptchaValue, setRecaptchaValue] = React.useState(null);

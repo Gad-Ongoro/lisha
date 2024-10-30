@@ -1,24 +1,18 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
+import { NavLink } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import GoogleSigninButton from './Google/GoogleSignInButton';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate, NavLink } from 'react-router-dom';
 import AnimatedXPage from '../Animations/AnimatedXPage';
 import { helix } from 'ldrs';
-import api from '../../api';
-import SnackBar from '../Notifications/SnackBar';
-import { AppContext } from '../../App';
+import { useAppContext } from '../../services/utilities';
 
 function Copyright(props) {
   return (
@@ -37,10 +31,7 @@ const defaultTheme = createTheme();
 
 export default function SignUp() {
 	helix.register();
-	const { loading, setLoading, snackBarOpen, setSnackBarOpen } = React.useContext(AppContext);
-	const [ snackBarMsg, setSnackBarMsg ] = React.useState('');
-	const [ snackBarSeverity, setSnackBarSeverity ] = React.useState('');
-	const navigate = useNavigate();
+	const { userRegister, loading, setLoading } = useAppContext();
 	const [inputs, setInputs] = React.useState({});
 
 	const handleChange = (event) => {
@@ -51,38 +42,8 @@ export default function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-		try{
-			setLoading(true);
-			api.post('users/register/', inputs)
-			.then((res) => {
-				if(res.status === 201){
-					setLoading(false);
-					setSnackBarSeverity('success');
-					setSnackBarMsg('Successufully registered! Please check your email for a verification OTP!');
-					setSnackBarOpen(true);
-					localStorage.setItem('email', inputs.email);
-					navigate('/account/otpverification');
-				}
-			})
-			.catch((err) => {
-				setLoading(false);
-				let responseDataObj = err.response.data;
-				let resEntriesData = Object.entries(responseDataObj)[0][1][0];
-				console.log(resEntriesData);
-				setSnackBarSeverity('error');
-				setSnackBarMsg(resEntriesData);
-				setSnackBarOpen(true);
-			})
-		}
-		catch(err){
-			setLoading(false);
-			let responseDataObj = err.response.data;
-			let resEntriesData = Object.entries(responseDataObj)[0][1][0];
-			console.log(resEntriesData);
-			setSnackBarSeverity('error');
-			setSnackBarMsg(resEntriesData);
-			setSnackBarOpen(true);
-		}
+		event.target.clear();
+		userRegister(inputs);
   };
 
 	const signUpLoader = (
@@ -98,7 +59,6 @@ export default function SignUp() {
 
   return (
 		<div className='bg-gray-900'>
-			<SnackBar message={snackBarMsg} severity={snackBarSeverity}></SnackBar>
 			<AnimatedXPage>
 				<ThemeProvider theme={defaultTheme}>
 					<Grid container component="main" sx={{ height: '100vh' }}>
@@ -139,7 +99,7 @@ export default function SignUp() {
 											<TextField
 												autoComplete="given-name"
 												name="first_name"
-												required
+												required={true}
 												fullWidth
 												id="firstName"
 												label="First Name"
