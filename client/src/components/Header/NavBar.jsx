@@ -47,7 +47,7 @@ const currencies = [
 ]
 
 export default function NavBar() {
-  const {  auth, setAuth, user_id, user, getScrapedData, currency, setCurrency, setCartOpen } = useAppContext();
+  const {  auth, setAuth, user_id, user, getScrapedData, scrollToTop, currency, setCurrency, setCartOpen } = useAppContext();
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -135,7 +135,12 @@ export default function NavBar() {
                     <NavLink
                       key={item.name}
                       to={`/products/${item.name}`}
-                      onClick={() => { getScrapedData(item.name)}}
+                      onClick={
+                        () => { 
+                          getScrapedData(item.name);
+                          scrollToTop();
+                        }
+                      }
                       className="group relative flex items-center gap-x-4 rounded-lg p-1 text-sm hover:bg-gray-50"
                     >
                       <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
