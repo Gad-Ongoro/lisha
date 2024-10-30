@@ -1,14 +1,14 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../Header/NavBar';
 import AnimatedXPage from '../Animations/AnimatedXPage';
 import HelixUIBall from '../Loaders/HelixUIBall';
 import { enqueueSnackbar } from 'notistack';
-import { AppContext } from '../../App';
+import { useAppContext } from '../../services/utilities';
 import api from '../../api';
 
 const OTPVerification = () => {
-  const { loading, setLoading } = useContext(AppContext);
+  const { loading, setLoading } = useAppContext();
   const [otp, setOtp] = useState(Array(6).fill(''));
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ const OTPVerification = () => {
       newOtp[index] = value;
       setOtp(newOtp);
 
-      // Move focus to the next input box if a digit is entered
+      // focus to the next input box if a digit is entered
       if (value !== '' && index < 5) {
         document.getElementById(`otp-input-${index + 1}`).focus();
       }
@@ -46,7 +46,7 @@ const OTPVerification = () => {
     } catch (error) {
       setLoading(false);
       console.log(error);
-      enqueueSnackbar(`${error.response.data.detail}`, { variant: 'error' });
+      enqueueSnackbar(`${error.response.data.detail}. Please request a new OTP!`, { variant: 'error' });
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ const OTPVerification = () => {
     <>
       <NavBar />
       <AnimatedXPage>
-        <div className="flex flex-col items-center justify-center bg-emerald-100 h-screen bg-gray-100">
+        <div className="flex flex-col items-center justify-center bg-emerald-100 h-screen">
           <h1 className="mb-4 text-2xl font-bold">Enter verification code</h1>
           <p className="mb-4">We've sent a verification code to {localStorage.getItem('email')}. Please enter it below.</p>
           <div className="flex space-x-2 mb-4">
@@ -110,7 +110,6 @@ const OTPVerification = () => {
               Remind Me Later
             </button>
             <button
-              // onClick={handleSubmit}
               onClick={handleVerifyOTP}
               className="px-4 py-2 text-white bg-emerald-500 rounded hover:bg-emerald-600"
             >

@@ -33,7 +33,7 @@ class UserCreateView(generics.CreateAPIView):
         # Email template
         subject = 'Welcome to GOFoods!'
         context = {
-            'username': f'{user.first_name} {user.first_name}',
+            'username': f'{user.first_name} {user.last_name}',
             'otp': otp,
             'message': 'Your OTP code is:',
         }

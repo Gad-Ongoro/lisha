@@ -34,12 +34,17 @@ const categories = [
 ];
 
 function CarouselItem({ category }) {
-  const { getScrapedData } = useAppContext();
+  const { getScrapedData, scrollToTop } = useAppContext();
   return (
     <NavLink 
       to={`/products/${category.name}`} 
       style={{ textDecoration: 'none' }}
-      onClick={() => getScrapedData(category.name)}
+      onClick={
+        () => {
+          getScrapedData(category.name);
+          scrollToTop();
+        }
+      }
     >
       <div className='grid justify-center items-center h-40 w-full transition-all duration-500 hover:scale-105'>
         <div className='grid justify-center items-center'>
