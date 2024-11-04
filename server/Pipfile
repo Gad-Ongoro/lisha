@@ -33,6 +33,8 @@ google-auth = "*"
 google-auth-oauthlib = "*"
 coverage = "*"
 beautifulsoup4 = "*"
+redis = "*"
+django-redis = "*"
 
 [dev-packages]
 
