@@ -42,7 +42,7 @@ export default function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-		event.target.clear();
+		event.target.reset();
 		userRegister(inputs);
   };
 
@@ -70,7 +70,7 @@ export default function SignUp() {
 							md={7}
 							sx={{
 								backgroundImage:
-									'url("/images/signinimg.jpg")',
+									'url("/images/gofoods_img2.webp")',
 								backgroundColor: (t) =>
 									t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
 								backgroundSize: 'cover',

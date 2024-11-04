@@ -72,6 +72,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 
+AUTH_USER_MODEL = 'api.User'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -103,7 +105,19 @@ DATABASES = {
 
 DATABASES["default"] = dj_database_url.parse(os.environ.get("DATABASE_URL"))
 
-AUTH_USER_MODEL = 'api.User'
+# Caching
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}",
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PASSWORD': os.environ.get('REDIS_PASSWORD'),
+        }
+    }
+}
+
+CACHE_TIMEOUT = 60 * 30
 
 # Google Auth2
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")

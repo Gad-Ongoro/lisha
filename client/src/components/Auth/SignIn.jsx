@@ -107,7 +107,7 @@ export default function SignIn() {
               sm={4}
               md={7}
               sx={{
-                backgroundImage: 'url("/images/signinimg.jpg")',
+                backgroundImage: 'url("/images/gofoods_img2.webp")',
                 backgroundColor: (t) =>
                   t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
                 backgroundSize: 'cover',
