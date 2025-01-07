@@ -35,6 +35,8 @@ coverage = "*"
 beautifulsoup4 = "*"
 redis = "*"
 django-redis = "*"
+cloudinary = "*"
+django-cloudinary-storage = "*"
 
 [dev-packages]
 
